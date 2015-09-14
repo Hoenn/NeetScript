@@ -1,33 +1,33 @@
-//
-////Title:        A Simple Drawing Tool
-////Version:      1.0
-////Copyright:    Copyright (c) 2001
-////Author:       Yasir Feroze Minhas
-////Company:      KAPS Computing (pvt) Ltd.
-////Description:  This is a simple tool written using AWT for drawing basic shapes.
-//
-//
-//import java.awt.Color;
-//import java.awt.Dimension;
-//import java.awt.Frame;
-//import java.awt.Graphics;
-//import java.awt.Insets;
-//import java.awt.Menu;
-//import java.awt.MenuBar;
-//import java.awt.MenuItem;
-//import java.awt.MenuShortcut;
-//import java.awt.Panel;
-//import java.awt.Point;
-//import java.awt.event.ActionEvent;
-//import java.awt.event.ActionListener;
-//import java.awt.event.MouseEvent;
-//import java.awt.event.MouseListener;
-//import java.awt.event.WindowAdapter;
-//import java.awt.event.WindowEvent;
-//import java.util.ArrayList;
-//
-//import javax.swing.JOptionPane;
-//
+
+//Title:        A Simple Drawing Tool
+//Version:      1.0
+//Copyright:    Copyright (c) 2001
+//Author:       Yasir Feroze Minhas
+//Company:      KAPS Computing (pvt) Ltd.
+//Description:  This is a simple tool written using AWT for drawing basic shapes.
+
+
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Graphics;
+import java.awt.Insets;
+import java.awt.Menu;
+import java.awt.MenuBar;
+import java.awt.MenuItem;
+import java.awt.MenuShortcut;
+import java.awt.Panel;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+
+import javax.swing.JOptionPane;
+
 //public class SimpleDrawingTool extends Frame{
 //
 //  //constants for menu shortcuts
@@ -182,6 +182,8 @@
 //
 //  private Point sPoint = null;
 //  private Point ePoint = null;
+//  //Drops a Null Pointer exception
+//  //when shape is set to null;
 //  private Shapes shape = new RectangleShape();
 //  private ArrayList<Point> list = new ArrayList<Point>();
 //  //override panel paint method to draw shapes

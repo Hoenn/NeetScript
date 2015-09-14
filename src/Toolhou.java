@@ -141,6 +141,10 @@ public class Toolhou extends Frame {
 		public void paint(Graphics g) {
 			g.setColor(Color.green);
 			// shape.draw(list, g);
+			for(Point p: list)
+			{
+				g.drawRect(p.x-5, p.y-5, 10, 10);
+			}
 		}
 
 		public void drawShape() {
@@ -162,6 +166,8 @@ public class Toolhou extends Frame {
 			// {
 			// list.add(e.getPoint());
 			// }
+			list.add(e.getPoint());
+			repaint();
 		}// mouseClicked
 
 		public void mouseEntered(MouseEvent e) {
