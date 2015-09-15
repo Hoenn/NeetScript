@@ -187,7 +187,6 @@ public class Toolhou extends Frame {
 			// else if(shape instanceof PolygonShape)
 			// {
 			// list.add(e.getPoint());
-			// }
 			list.add(e.getPoint());
 			pointStack.add(e.getPoint());
 			if(redoStack.size()>0)
