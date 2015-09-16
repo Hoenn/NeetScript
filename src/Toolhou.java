@@ -6,6 +6,7 @@ import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.Menu;
 import java.awt.MenuBar;
+import java.awt.MenuContainer;
 import java.awt.MenuItem;
 import java.awt.MenuShortcut;
 import java.awt.Panel;
@@ -37,25 +38,39 @@ public class Toolhou extends Frame {
 	private static final int kControlX = 88;
 	private static final int kControlY = 89;
 	private static final int kControlZ = 90;
+	
+	private static String[] resolutions = {
+		"4:3 - 640x480",
+		"4:3 - 1024x768",
+		"4:3 - 1280x960",
+		"3:2 - 480x320",
+		"3:2 - 960x640",
+		"16:10 - 800x480",
+		"16:10 - 1280x800",
+		"17:10 - 1024x600",
+		"16:9 - 640x360",
+		"16:9 - 854x480",
+		"16:9 - 1136x640",
+		"16:9 - 1920x1080"
+	};
 
 
 
 	private DrawingPanel panel;
-	private Toolhou th;
+	private Toolhou mainWindow;
 	public Toolhou() {
 		super("Touhou Scripting Tool");
 		addMenu();
 		addPanel();
 		this.addWindowListener(new WindowHandler());
-		// set frame size
-		this.setSize(400, 400);
-		// make this frame visible
+		this.setSize(640, 480);
 		this.setVisible(true);
-		th=this;
+		this.setResizable(false);
+		mainWindow=this;
 	}
 
 	public static void main(String args[]) {
-		Toolhou toolhou = new Toolhou();
+		new Toolhou();
 	}
 
 	private void addMenu() {
@@ -63,17 +78,24 @@ public class Toolhou extends Frame {
 		MenuBar menuBar = new MenuBar();
 		Menu file = new Menu("File");
 		Menu edit = new Menu("Edit");
+		Menu window = new Menu("Window");
 		Menu about = new Menu("About");
 		// now add menu items to these Menu objects
 		file.add(new MenuItem("Exit", new MenuShortcut(kControlQ))).addActionListener(new WindowHandler());
 
 		edit.add(new MenuItem("Undo", new MenuShortcut(kControlZ))).addActionListener(new WindowHandler());
 		edit.add(new MenuItem("Redo", new MenuShortcut(kControlY))).addActionListener(new WindowHandler());
+		for(int i=0; i<resolutions.length; i++)
+		{
+			window.add(new MenuItem(resolutions[i])).addActionListener(new WindowHandler());
+		}
+		window.getItem(0).setEnabled(false);
 		
 		about.add(new MenuItem("About")).addActionListener(new WindowHandler());
 		// add menus to menubar
 		menuBar.add(file);
 		menuBar.add(edit);
+		menuBar.add(window);
 		menuBar.add(about);
 		if (null == this.getMenuBar()) {
 			this.setMenuBar(menuBar);
@@ -117,20 +139,39 @@ public class Toolhou extends Frame {
 			panel.repaint();
 		}
 	}
-
+	private int handleResize(ActionEvent e)
+	{
+		String targetSize = e.getActionCommand().toString();
+		int resPos=-1;
+		for(int i=0; i<resolutions.length; i++)
+		{
+			if(resolutions[i].equals(targetSize))
+			{
+				resPos = i;
+				i=resolutions.length;
+			}
+		}
+		int width = Integer.parseInt(targetSize.substring(targetSize.indexOf("-")+1, targetSize.indexOf("x")).trim());
+		int height = Integer.parseInt(targetSize.substring(targetSize.indexOf("x")+1).trim());
+		mainWindow.resize(width, height);
+		
+		return resPos;
+	}	
 	private class WindowHandler extends WindowAdapter implements ActionListener {
 		public void windowClosing(WindowEvent e) {
 			System.exit(0);
 		}
 
-		private void clearMenuSelection() {
-			Menu menu = getMenuBar().getMenu(1);
+		private void clearMenuSelection(int menuNum) {
+			Menu menu = getMenuBar().getMenu(menuNum);
 			for (int i = 0; i < menu.getItemCount(); i++)
 				menu.getItem(i).setEnabled(true);
 		}
 
 		public void actionPerformed(ActionEvent e) {
-
+			//Allows access to the name of the Menu form which item was chosen
+			Menu menu = (Menu)((MenuItem)e.getSource()).getParent();
+		
 			if (e.getActionCommand().equalsIgnoreCase("exit")) {
 				System.exit(0);
 			} else if (e.getActionCommand().equalsIgnoreCase("Undo")) {
@@ -138,7 +179,13 @@ public class Toolhou extends Frame {
 			} else if (e.getActionCommand().equalsIgnoreCase("Redo")) {
 				redo();
 			} 
-			
+			else if(menu.getLabel().equals("Window"))
+			{
+				int resPos= handleResize(e);
+				
+				clearMenuSelection(2);
+				menu.getItem(resPos).setEnabled(false);
+			}
 			else if (e.getActionCommand().equalsIgnoreCase("About")) {
 				JOptionPane.showMessageDialog(null, "A tool for making touhou scripts", "Info",
 						JOptionPane.PLAIN_MESSAGE);
@@ -152,11 +199,10 @@ public class Toolhou extends Frame {
 		private Stack<Point> redoStack = new Stack<Point>();
 		public ArrayList<Point> list = new ArrayList<Point>();
 
-		// override panel paint method to draw shapes
 		public void paint(Graphics g) {
 			Graphics2D g2 = (Graphics2D)g;
-			g.setColor(Color.green);
-			// shape.draw(list, g);
+			g.setColor(Color.blue);
+			
 			for(int i =0; i < list.size(); i++)
 			{	
 				Point currPoint = list.get(i);
