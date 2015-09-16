@@ -249,7 +249,7 @@ public class Toolhou extends Frame {
 
 		public void mousePressed(MouseEvent e) {
 
-		}// mousePressed
+		}
 
 		public void mouseReleased(MouseEvent e) {
 			// ePoint = e.getPoint();
