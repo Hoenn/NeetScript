@@ -2,10 +2,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
 import java.awt.Graphics;
-<<<<<<< HEAD
 import java.awt.Graphics2D;
-=======
->>>>>>> 2dec51bae0ffd01e488b398f4a36e2eace4420a6
 import java.awt.Insets;
 import java.awt.Menu;
 import java.awt.MenuBar;
@@ -19,13 +16,11 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-<<<<<<< HEAD
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
 import java.util.Stack;
-=======
+
 import java.util.ArrayList;
->>>>>>> 2dec51bae0ffd01e488b398f4a36e2eace4420a6
 
 import javax.swing.JOptionPane;
 
@@ -33,7 +28,6 @@ public class Toolhou extends Frame {
 
 	// constants for menu shortcuts
 	private static final int kControlA = 65;
-<<<<<<< HEAD
 	private static final int kControlC = 67;
 	private static final int kControlD = 68;
 	private static final int kControlP = 80;
@@ -43,14 +37,8 @@ public class Toolhou extends Frame {
 	private static final int kControlX = 88;
 	private static final int kControlY = 89;
 	private static final int kControlZ = 90;
-=======
-	private static final int kControlD = 68;
-	private static final int kControlC = 67;
-	private static final int kControlR = 82;
-	private static final int kControlP = 80;
-	private static final int kControlT = 84;
-	private static final int kControlX = 88;
->>>>>>> 2dec51bae0ffd01e488b398f4a36e2eace4420a6
+
+
 
 	private DrawingPanel panel;
 
@@ -68,16 +56,11 @@ public class Toolhou extends Frame {
 	public static void main(String args[]) {
 		Toolhou toolhou = new Toolhou();
 	}
-<<<<<<< HEAD
-	
-=======
 
->>>>>>> 2dec51bae0ffd01e488b398f4a36e2eace4420a6
 	private void addMenu() {
 		// Add menu bar to our frame
 		MenuBar menuBar = new MenuBar();
 		Menu file = new Menu("File");
-<<<<<<< HEAD
 		Menu edit = new Menu("Edit");
 		Menu about = new Menu("About");
 		// now add menu items to these Menu objects
@@ -86,27 +69,9 @@ public class Toolhou extends Frame {
 		edit.add(new MenuItem("Undo", new MenuShortcut(kControlZ))).addActionListener(new WindowHandler());
 		edit.add(new MenuItem("Redo", new MenuShortcut(kControlY))).addActionListener(new WindowHandler());
 
-=======
-		Menu shape = new Menu("Shapes");
-		Menu about = new Menu("About");
-		// now add menu items to these Menu objects
-		file.add(new MenuItem("Exit", new MenuShortcut(kControlX))).addActionListener(new WindowHandler());
-
-		shape.add(new MenuItem("Rectangle", new MenuShortcut(kControlR))).addActionListener(new WindowHandler());
-		shape.add(new MenuItem("Circle", new MenuShortcut(kControlC))).addActionListener(new WindowHandler());
-		shape.add(new MenuItem("Triangle", new MenuShortcut(kControlT))).addActionListener(new WindowHandler());
-		shape.add(new MenuItem("Polygon", new MenuShortcut(kControlP))).addActionListener(new WindowHandler());
-		shape.add(new MenuItem("Draw Polygon", new MenuShortcut(kControlD))).addActionListener(new WindowHandler());
->>>>>>> 2dec51bae0ffd01e488b398f4a36e2eace4420a6
-
-		about.add(new MenuItem("About", new MenuShortcut(kControlA))).addActionListener(new WindowHandler());
 		// add menus to menubar
 		menuBar.add(file);
-<<<<<<< HEAD
 		menuBar.add(edit);
-=======
-		menuBar.add(shape);
->>>>>>> 2dec51bae0ffd01e488b398f4a36e2eace4420a6
 		menuBar.add(about);
 		// menuBar.setVisible(true);
 		if (null == this.getMenuBar()) {
@@ -133,7 +98,6 @@ public class Toolhou extends Frame {
 		panel.addMouseListener(panel);
 		this.add(panel);
 	}// end of addPanel();
-<<<<<<< HEAD
 	private void undo()
 	{
 		if(panel.list.size()>0)
@@ -152,9 +116,7 @@ public class Toolhou extends Frame {
 			panel.repaint();
 		}
 	}
-=======
 
->>>>>>> 2dec51bae0ffd01e488b398f4a36e2eace4420a6
 	private class WindowHandler extends WindowAdapter implements ActionListener {
 		public void windowClosing(WindowEvent e) {
 			System.exit(0);
@@ -170,7 +132,6 @@ public class Toolhou extends Frame {
 
 			if (e.getActionCommand().equalsIgnoreCase("exit")) {
 				System.exit(0);
-<<<<<<< HEAD
 			} else if (e.getActionCommand().equalsIgnoreCase("Undo")) {
 				//clearMenuSelection();
 				//getMenuBar().getShortcutMenuItem(new MenuShortcut(kControlR)).setEnabled(false);
@@ -180,25 +141,9 @@ public class Toolhou extends Frame {
 				//clearMenuSelection();
 				//getMenuBar().getShortcutMenuItem(new MenuShortcut(kControlC)).setEnabled(false);
 				redo();
-=======
-			} else if (e.getActionCommand().equalsIgnoreCase("Rectangle")) {
-				clearMenuSelection();
-				getMenuBar().getShortcutMenuItem(new MenuShortcut(kControlR)).setEnabled(false);
-
-			} else if (e.getActionCommand().equalsIgnoreCase("Circle")) {
-				clearMenuSelection();
-				getMenuBar().getShortcutMenuItem(new MenuShortcut(kControlC)).setEnabled(false);
-
-			} else if (e.getActionCommand().equalsIgnoreCase("Triangle")) {
-				clearMenuSelection();
-				getMenuBar().getShortcutMenuItem(new MenuShortcut(kControlT)).setEnabled(false);
-
-			} else if (e.getActionCommand().equalsIgnoreCase("Polygon")) {
-				clearMenuSelection();
-				getMenuBar().getShortcutMenuItem(new MenuShortcut(kControlP)).setEnabled(false);
->>>>>>> 2dec51bae0ffd01e488b398f4a36e2eace4420a6
-
-			} else if (e.getActionCommand().equalsIgnoreCase("About")) {
+			} 
+			
+			else if (e.getActionCommand().equalsIgnoreCase("About")) {
 				JOptionPane.showMessageDialog(null, "A tool for making touhou scripts", "About",
 						JOptionPane.PLAIN_MESSAGE);
 			}
@@ -207,7 +152,6 @@ public class Toolhou extends Frame {
 
 	class DrawingPanel extends Panel implements MouseListener {
 
-<<<<<<< HEAD
 		private Stack<Point> pointStack = new Stack<Point>();
 		private Stack<Point> redoStack = new Stack<Point>();
 		public ArrayList<Point> list = new ArrayList<Point>();
@@ -227,23 +171,8 @@ public class Toolhou extends Frame {
 					g2.draw(new Line2D.Double(prevPoint, currPoint));
 				}
 			}
-			
-=======
-		private Point sPoint = null;
-		private Point ePoint = null;
-		private ArrayList<Point> list = new ArrayList<Point>();
-
-		// override panel paint method to draw shapes
-		public void paint(Graphics g) {
-			g.setColor(Color.green);
-			// shape.draw(list, g);
-			for(Point p: list)
-			{
-				g.drawRect(p.x-5, p.y-5, 10, 10);
-			}
->>>>>>> 2dec51bae0ffd01e488b398f4a36e2eace4420a6
 		}
-
+			
 		public void drawShape() {
 			// this.shape = shape;
 		}
@@ -264,12 +193,10 @@ public class Toolhou extends Frame {
 			// list.add(e.getPoint());
 			// }
 			list.add(e.getPoint());
-<<<<<<< HEAD
 			pointStack.add(e.getPoint());
 			if(redoStack.size()>0)
 				redoStack.clear();
-=======
->>>>>>> 2dec51bae0ffd01e488b398f4a36e2eace4420a6
+
 			repaint();
 		}// mouseClicked
 
@@ -280,10 +207,7 @@ public class Toolhou extends Frame {
 		}
 
 		public void mousePressed(MouseEvent e) {
-<<<<<<< HEAD
-=======
-			sPoint = e.getPoint();
->>>>>>> 2dec51bae0ffd01e488b398f4a36e2eace4420a6
+
 		}// mousePressed
 
 		public void mouseReleased(MouseEvent e) {
