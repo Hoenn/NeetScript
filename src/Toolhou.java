@@ -41,7 +41,7 @@ public class Toolhou extends Frame {
 
 
 	private DrawingPanel panel;
-
+	private Toolhou th;
 	public Toolhou() {
 		super("Touhou Scripting Tool");
 		addMenu();
@@ -51,6 +51,7 @@ public class Toolhou extends Frame {
 		this.setSize(400, 400);
 		// make this frame visible
 		this.setVisible(true);
+		th=this;
 	}
 
 	public static void main(String args[]) {
@@ -68,12 +69,12 @@ public class Toolhou extends Frame {
 
 		edit.add(new MenuItem("Undo", new MenuShortcut(kControlZ))).addActionListener(new WindowHandler());
 		edit.add(new MenuItem("Redo", new MenuShortcut(kControlY))).addActionListener(new WindowHandler());
-
+		
+		about.add(new MenuItem("About")).addActionListener(new WindowHandler());
 		// add menus to menubar
 		menuBar.add(file);
 		menuBar.add(edit);
 		menuBar.add(about);
-		// menuBar.setVisible(true);
 		if (null == this.getMenuBar()) {
 			this.setMenuBar(menuBar);
 		}
@@ -133,18 +134,13 @@ public class Toolhou extends Frame {
 			if (e.getActionCommand().equalsIgnoreCase("exit")) {
 				System.exit(0);
 			} else if (e.getActionCommand().equalsIgnoreCase("Undo")) {
-				//clearMenuSelection();
-				//getMenuBar().getShortcutMenuItem(new MenuShortcut(kControlR)).setEnabled(false);
 				undo();
-
 			} else if (e.getActionCommand().equalsIgnoreCase("Redo")) {
-				//clearMenuSelection();
-				//getMenuBar().getShortcutMenuItem(new MenuShortcut(kControlC)).setEnabled(false);
 				redo();
 			} 
 			
 			else if (e.getActionCommand().equalsIgnoreCase("About")) {
-				JOptionPane.showMessageDialog(null, "A tool for making touhou scripts", "About",
+				JOptionPane.showMessageDialog(null, "A tool for making touhou scripts", "Info",
 						JOptionPane.PLAIN_MESSAGE);
 			}
 		}
