@@ -214,32 +214,15 @@ public class Toolhou extends Frame {
 				}
 			}
 		}
-			
-		public void drawShape() {
-			// this.shape = shape;
-		}
 
-		// define mouse handler
 		public void mouseClicked(MouseEvent e) {
-			// //if user wants to draw triangle, call repaint after 3 clicks
-			// if(shape instanceof TriangleShape)
-			// {
-			// list.add(e.getPoint());
-			// if(list.size() > 2)
-			// {
-			// repaint();
-			// }
-			// }
-			// else if(shape instanceof PolygonShape)
-			// {
-			// list.add(e.getPoint());
 			list.add(e.getPoint());
 			pointStack.add(e.getPoint());
 			if(redoStack.size()>0)
 				redoStack.clear();
 
 			repaint();
-		}// mouseClicked
+		}
 
 		public void mouseEntered(MouseEvent e) {
 		}
@@ -252,25 +235,6 @@ public class Toolhou extends Frame {
 		}
 
 		public void mouseReleased(MouseEvent e) {
-			// ePoint = e.getPoint();
-			// if(ePoint.getX() < sPoint.getX())
-			// {
-			// Point temp = ePoint;
-			// ePoint = sPoint;
-			// sPoint = temp;
-			// }
-			// if(ePoint.getY() < sPoint.getY())
-			// {
-			// int temp = (int)ePoint.getY();
-			// ePoint.y = (int)sPoint.getY();
-			// sPoint.y = temp;
-			// }
-			// if(shape instanceof RectangleShape || shape instanceof OvalShape)
-			// {
-			// list.clear();
-			// list.add(sPoint);
-			// list.add(ePoint);
-			// repaint();
 		}
-	}// mouseReleased
+	}
 }// DrawingPanel
