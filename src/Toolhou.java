@@ -53,9 +53,7 @@ public class Toolhou extends Frame {
 		"16:9 - 1136x640",
 		"16:9 - 1920x1080"
 	};
-
-
-
+	
 	private DrawingPanel panel;
 	private Toolhou mainWindow;
 	public Toolhou() {
@@ -82,16 +80,16 @@ public class Toolhou extends Frame {
 		Menu about = new Menu("About");
 		// now add menu items to these Menu objects
 		file.add(new MenuItem("Exit", new MenuShortcut(kControlQ))).addActionListener(new WindowHandler());
-
 		edit.add(new MenuItem("Undo", new MenuShortcut(kControlZ))).addActionListener(new WindowHandler());
 		edit.add(new MenuItem("Redo", new MenuShortcut(kControlY))).addActionListener(new WindowHandler());
 		for(int i=0; i<resolutions.length; i++)
 		{
 			window.add(new MenuItem(resolutions[i])).addActionListener(new WindowHandler());
 		}
-		window.getItem(0).setEnabled(false);
-		
+		//The default window size is at position 0 of the list
+		window.getItem(0).setEnabled(false);	
 		about.add(new MenuItem("About")).addActionListener(new WindowHandler());
+		
 		// add menus to menubar
 		menuBar.add(file);
 		menuBar.add(edit);
@@ -100,11 +98,9 @@ public class Toolhou extends Frame {
 		if (null == this.getMenuBar()) {
 			this.setMenuBar(menuBar);
 		}
-	}// addMenu()
+	}
 
-	/**
-	 * This method adds a panel to SimpleDrawingTool for drawing shapes.
-	 */
+
 	private void addPanel() {
 		panel = new DrawingPanel();
 		// get size of SimpleDrawingTool frame
@@ -120,7 +116,7 @@ public class Toolhou extends Frame {
 		// add mouse listener. Panel itself will be handling mouse events
 		panel.addMouseListener(panel);
 		this.add(panel);
-	}// end of addPanel();
+	}
 	private void undo()
 	{
 		if(panel.list.size()>0)
@@ -193,7 +189,7 @@ public class Toolhou extends Frame {
 		}
 	}
 
-	class DrawingPanel extends Panel implements MouseListener {
+public class DrawingPanel extends Panel implements MouseListener {
 
 		private Stack<Point> pointStack = new Stack<Point>();
 		private Stack<Point> redoStack = new Stack<Point>();
@@ -237,4 +233,4 @@ public class Toolhou extends Frame {
 		public void mouseReleased(MouseEvent e) {
 		}
 	}
-}// DrawingPanel
+}
