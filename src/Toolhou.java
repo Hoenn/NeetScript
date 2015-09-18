@@ -209,6 +209,11 @@ public class DrawingPanel extends Panel implements MouseListener {
 					g2.draw(new Line2D.Double(prevPoint, currPoint));
 				}
 			}
+			if(list.size()>1)
+			{
+				g.setColor(Color.green);
+				g2.draw(new Line2D.Double(list.get(0), list.get(list.size()-1)));
+			}
 		}
 
 		public void mouseClicked(MouseEvent e) {
