@@ -106,7 +106,7 @@ public class Toolhou extends Frame {
 		// get size of SimpleDrawingTool frame
 		Dimension d = this.getSize();
 		// get insets of frame
-		Insets ins = this.insets();
+		Insets ins = this.getInsets();
 		// exclude insets from the size of the panel
 		d.height = d.height - ins.top - ins.bottom;
 		d.width = d.width - ins.left - ins.right;
@@ -149,7 +149,7 @@ public class Toolhou extends Frame {
 		}
 		int width = Integer.parseInt(targetSize.substring(targetSize.indexOf("-")+1, targetSize.indexOf("x")).trim());
 		int height = Integer.parseInt(targetSize.substring(targetSize.indexOf("x")+1).trim());
-		mainWindow.resize(width, height);
+		mainWindow.setSize(width, height);
 		
 		return resPos;
 	}	
