@@ -31,9 +31,11 @@ public class Toolhou extends Frame {
 	private static final int kControlA = 65;
 	private static final int kControlC = 67;
 	private static final int kControlD = 68;
+	private static final int kControlO = 79;
 	private static final int kControlP = 80;
 	private static final int kControlQ = 81;
 	private static final int kControlR = 82;
+	private static final int kControlS = 83;
 	private static final int kControlT = 84;
 	private static final int kControlX = 88;
 	private static final int kControlY = 89;
@@ -77,9 +79,13 @@ public class Toolhou extends Frame {
 		Menu file = new Menu("File");
 		Menu edit = new Menu("Edit");
 		Menu window = new Menu("Window");
-		Menu about = new Menu("About");
 		// now add menu items to these Menu objects
+		file.add(new MenuItem("Open", new MenuShortcut(kControlO))).addActionListener(new WindowHandler());
+		file.add(new MenuItem("Save", new MenuShortcut(kControlS))).addActionListener(new WindowHandler());
+		file.add(new MenuItem("Save as")).addActionListener(new WindowHandler());
+		file.add(new MenuItem("About")).addActionListener(new WindowHandler());
 		file.add(new MenuItem("Exit")).addActionListener(new WindowHandler());
+		
 		edit.add(new MenuItem("Undo", new MenuShortcut(kControlZ))).addActionListener(new WindowHandler());
 		edit.add(new MenuItem("Redo", new MenuShortcut(kControlY))).addActionListener(new WindowHandler());
 		for(int i=0; i<resolutions.length; i++)
@@ -88,13 +94,11 @@ public class Toolhou extends Frame {
 		}
 		//The default window size is at position 0 of the list
 		window.getItem(0).setEnabled(false);	
-		about.add(new MenuItem("About")).addActionListener(new WindowHandler());
 		
 		// add menus to menubar
 		menuBar.add(file);
 		menuBar.add(edit);
 		menuBar.add(window);
-		menuBar.add(about);
 		if (null == this.getMenuBar()) {
 			this.setMenuBar(menuBar);
 		}
