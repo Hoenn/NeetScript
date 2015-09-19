@@ -79,7 +79,7 @@ public class Toolhou extends Frame {
 		Menu window = new Menu("Window");
 		Menu about = new Menu("About");
 		// now add menu items to these Menu objects
-		file.add(new MenuItem("Exit", new MenuShortcut(kControlQ))).addActionListener(new WindowHandler());
+		file.add(new MenuItem("Exit")).addActionListener(new WindowHandler());
 		edit.add(new MenuItem("Undo", new MenuShortcut(kControlZ))).addActionListener(new WindowHandler());
 		edit.add(new MenuItem("Redo", new MenuShortcut(kControlY))).addActionListener(new WindowHandler());
 		for(int i=0; i<resolutions.length; i++)
