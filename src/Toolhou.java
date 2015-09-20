@@ -15,6 +15,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Line2D;
@@ -119,11 +120,12 @@ public class Toolhou extends Frame {
 		panel.setBackground(Color.white);
 		// add mouse listener. Panel itself will be handling mouse events
 		panel.addMouseListener(panel);
+		panel.addMouseMotionListener(panel);
 		this.add(panel);
 	}
 	private void undo()
 	{
-		if(panel.list.size()>0)
+		if(panel.pointStack.size()>0)
 		{
 			panel.redoStack.push(panel.pointStack.pop());
 			panel.list.remove(panel.list.size()-1);
@@ -132,6 +134,7 @@ public class Toolhou extends Frame {
 	}
 	private void redo()
 	{
+		//if(panel.redoStack.size()>0)
 		if(panel.redoStack.size()>0)
 		{
 			panel.pointStack.push(panel.redoStack.pop());
@@ -193,15 +196,22 @@ public class Toolhou extends Frame {
 		}
 	}
 
-public class DrawingPanel extends Panel implements MouseListener {
+public class DrawingPanel extends Panel implements MouseListener, MouseMotionListener{
 
 		private Stack<Point> pointStack = new Stack<Point>();
 		private Stack<Point> redoStack = new Stack<Point>();
 		public ArrayList<Point> list = new ArrayList<Point>();
+		private boolean dragging = false; 
+		private int dragTolerance = 5;
+		private Point dragged = null;
 
 		public void paint(Graphics g) {
+			
 			Graphics2D g2 = (Graphics2D)g;
-			g.setColor(Color.blue);
+			if(dragging)
+				g.setColor(Color.red);
+			else
+				g.setColor(Color.blue);
 			
 			for(int i =0; i < list.size(); i++)
 			{	
@@ -221,11 +231,15 @@ public class DrawingPanel extends Panel implements MouseListener {
 		}
 
 		public void mouseClicked(MouseEvent e) {
-			list.add(e.getPoint());
-			pointStack.add(e.getPoint());
-			if(redoStack.size()>0)
-				redoStack.clear();
-
+			//Left Click
+			if(e.getButton() == MouseEvent.BUTTON1 && !dragging)
+			{
+				list.add(e.getPoint());
+				pointStack.add(e.getPoint());
+				if(redoStack.size()>0)
+					redoStack.clear();
+			}
+			
 			repaint();
 		}
 
@@ -236,10 +250,42 @@ public class DrawingPanel extends Panel implements MouseListener {
 		}
 
 		public void mousePressed(MouseEvent e) {
-
+			if(e.getButton() == MouseEvent.BUTTON3)
+			{
+				if(list.size()>0)
+				{
+					for(int i = 0 ; i < list.size() ; i++)
+					{
+						Point p = list.get(i);
+						if(Math.abs(e.getPoint().x-p.x)<dragTolerance && Math.abs(e.getPoint().y-p.y)<dragTolerance)
+						{
+							dragged=list.get(i);
+							dragging= true;
+							i=list.size();
+						}
+					}
+				}
+			}
 		}
 
 		public void mouseReleased(MouseEvent e) {
+			dragging=false;
+			dragged=null;
+			repaint();
+		}
+
+		public void mouseDragged(MouseEvent e)
+		{
+			if(dragging)
+			{
+				dragged.x=e.getX();
+				dragged.y=e.getY();
+			}
+			repaint();
+		}
+		public void mouseMoved(MouseEvent e)
+		{
+			
 		}
 	}
 }
