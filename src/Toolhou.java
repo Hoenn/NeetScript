@@ -123,22 +123,32 @@ public class Toolhou extends Frame {
 		panel.addMouseMotionListener(panel);
 		this.add(panel);
 	}
+	@SuppressWarnings("unchecked")
 	private void undo()
 	{
-		if(panel.pointStack.size()>0)
+		System.out.println("Undo: "+panel.stateStack.size());
+		//if(panel.pointStack.size()>0)
+		if(!panel.dragging&&panel.stateStack.size()>0)
 		{
-			panel.redoStack.push(panel.pointStack.pop());
-			panel.list.remove(panel.list.size()-1);
+			//panel.redoStack.push(panel.pointStack.pop());
+			//panel.list.remove(panel.list.size()-1);
+			panel.redoStateStack.push(panel.stateStack.pop());
+			if(!panel.stateStack.isEmpty())
+				panel.list = (ArrayList<Point>)panel.stateStack.peek().clone();
+			else
+				panel.list.clear();
 			panel.repaint();
 		}
 	}
 	private void redo()
 	{
 		//if(panel.redoStack.size()>0)
-		if(panel.redoStack.size()>0)
+		if(!panel.dragging&&panel.redoStateStack.size()>0)
 		{
-			panel.pointStack.push(panel.redoStack.pop());
-			panel.list.add(panel.pointStack.peek());
+			//panel.pointStack.push(panel.redoStack.pop());
+			panel.stateStack.push(panel.redoStateStack.pop());
+			//panel.list.add(panel.pointStack.peek());
+			panel.list = panel.stateStack.peek();
 			panel.repaint();
 		}
 	}
@@ -197,9 +207,9 @@ public class Toolhou extends Frame {
 	}
 
 public class DrawingPanel extends Panel implements MouseListener, MouseMotionListener{
-
-		private Stack<Point> pointStack = new Stack<Point>();
-		private Stack<Point> redoStack = new Stack<Point>();
+		
+		private Stack<ArrayList<Point>> stateStack = new Stack<ArrayList<Point>>();
+		private Stack<ArrayList<Point>> redoStateStack = new Stack<ArrayList<Point>>();
 		public ArrayList<Point> list = new ArrayList<Point>();
 		private boolean dragging = false; 
 		private int dragTolerance = 5;
@@ -230,14 +240,17 @@ public class DrawingPanel extends Panel implements MouseListener, MouseMotionLis
 			}
 		}
 
+		@SuppressWarnings("unchecked")
 		public void mouseClicked(MouseEvent e) {
 			//Left Click
 			if(e.getButton() == MouseEvent.BUTTON1 && !dragging)
 			{
 				list.add(e.getPoint());
-				pointStack.add(e.getPoint());
-				if(redoStack.size()>0)
-					redoStack.clear();
+				System.out.println("Adding to undo");
+				stateStack.push((ArrayList<Point>)list.clone());
+
+				if(redoStateStack.size()>0)
+					redoStateStack.clear();
 			}
 			
 			repaint();
@@ -259,7 +272,8 @@ public class DrawingPanel extends Panel implements MouseListener, MouseMotionLis
 						Point p = list.get(i);
 						if(Math.abs(e.getPoint().x-p.x)<dragTolerance && Math.abs(e.getPoint().y-p.y)<dragTolerance)
 						{
-							dragged=list.get(i);
+							dragged=(Point)list.get(i).clone();
+							list.set(i, dragged);
 							dragging= true;
 							i=list.size();
 						}
@@ -268,10 +282,19 @@ public class DrawingPanel extends Panel implements MouseListener, MouseMotionLis
 			}
 		}
 
+		@SuppressWarnings("unchecked")
 		public void mouseReleased(MouseEvent e) {
-			dragging=false;
-			dragged=null;
-			repaint();
+			if(dragging)
+			{
+				dragging=false;
+				dragged=null;
+				System.out.println("Adding to undo");
+				stateStack.push((ArrayList<Point>)list.clone());
+				if(redoStateStack.size()>0)
+					redoStateStack.clear();
+				
+				repaint();
+			}
 		}
 
 		public void mouseDragged(MouseEvent e)
