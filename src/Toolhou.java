@@ -74,7 +74,7 @@ public class Toolhou extends Frame {
 	private File currentFile;
 
 	public Toolhou() {
-		super("Touhou Scripting Tool");
+		super("NeetScript");
 		addMenu();
 		addPanel();
 		this.addWindowListener(new WindowHandler());
@@ -160,7 +160,7 @@ public class Toolhou extends Frame {
 		if(!panel.dragging&&panel.redoStateStack.size()>0)
 		{
 			panel.stateStack.push(panel.redoStateStack.pop());
-			panel.list = panel.stateStack.peek();
+			panel.list = (ArrayList<Point>)panel.stateStack.peek().clone();
 			panel.repaint();
 		}
 	}
@@ -221,6 +221,7 @@ public class Toolhou extends Frame {
 				content = content.substring(end+1);
 			}
 			panel.list = listFromFile;
+			panel.stateStack.push((ArrayList<Point>)listFromFile.clone());
 			panel.repaint();
 			
 		}
