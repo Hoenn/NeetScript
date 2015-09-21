@@ -207,7 +207,7 @@ public class DrawingPanel extends Panel implements MouseListener, MouseMotionLis
 		private Stack<ArrayList<Point>> redoStateStack = new Stack<ArrayList<Point>>();
 		public ArrayList<Point> list = new ArrayList<Point>();
 		private boolean dragging = false; 
-		private int pointMarkerSize = 5;
+		private int pointMarkerSize = 10;
 		private Point dragged = null;
 
 		public void paint(Graphics g) {
@@ -221,7 +221,7 @@ public class DrawingPanel extends Panel implements MouseListener, MouseMotionLis
 			for(int i =0; i < list.size(); i++)
 			{	
 				Point currPoint = list.get(i);
-				g.drawRect(currPoint.x-pointMarkerSize, currPoint.y-pointMarkerSize, 10, 10);
+				g.drawRect(currPoint.x-pointMarkerSize/2, currPoint.y-pointMarkerSize/2, pointMarkerSize, pointMarkerSize);
 				if(i>0)
 				{
 					Point prevPoint = list.get(i-1);
