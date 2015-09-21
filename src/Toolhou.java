@@ -6,7 +6,6 @@ import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.Menu;
 import java.awt.MenuBar;
-import java.awt.MenuContainer;
 import java.awt.MenuItem;
 import java.awt.MenuShortcut;
 import java.awt.Panel;
@@ -19,12 +18,15 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Line2D;
+import java.io.File;
+import java.util.ArrayList;
 import java.util.ArrayList;
 import java.util.Stack;
 
-import java.util.ArrayList;
-
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class Toolhou extends Frame {
 
@@ -59,6 +61,8 @@ public class Toolhou extends Frame {
 	
 	private DrawingPanel panel;
 	private Toolhou mainWindow;
+	private JFileChooser fileChooser;
+
 	public Toolhou() {
 		super("Touhou Scripting Tool");
 		addMenu();
@@ -68,6 +72,9 @@ public class Toolhou extends Frame {
 		this.setVisible(true);
 		this.setResizable(false);
 		mainWindow=this;
+		fileChooser = new JFileChooser();
+		FileFilter filter = new FileNameExtensionFilter("TH file", "th");
+		fileChooser.setFileFilter(filter);
 	}
 
 	public static void main(String args[]) {
@@ -179,8 +186,24 @@ public class Toolhou extends Frame {
 		public void actionPerformed(ActionEvent e) {
 			//Allows access to the name of the Menu form which item was chosen
 			Menu menu = (Menu)((MenuItem)e.getSource()).getParent();
-		
-			if (e.getActionCommand().equalsIgnoreCase("exit")) {
+			if(e.getActionCommand().equalsIgnoreCase("Open"))
+			{
+				int returnVal = fileChooser.showOpenDialog(Toolhou.this);
+				if(returnVal == JFileChooser.APPROVE_OPTION)
+				{
+					File file = fileChooser.getSelectedFile();
+					System.out.println(file.getAbsolutePath());
+				}
+			}
+			else if(e.getActionCommand().equalsIgnoreCase("Save as"))
+			{
+				int returnVal = fileChooser.showSaveDialog(Toolhou.this);
+				if(returnVal == JFileChooser.APPROVE_OPTION)
+				{
+					System.out.println("File name");
+				}
+			}
+			else if (e.getActionCommand().equalsIgnoreCase("exit")) {
 				System.exit(0);
 			} else if (e.getActionCommand().equalsIgnoreCase("Undo")) {
 				undo();
