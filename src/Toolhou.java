@@ -18,7 +18,16 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Line2D;
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.io.Writer;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.ArrayList;
 import java.util.Stack;
@@ -62,6 +71,7 @@ public class Toolhou extends Frame {
 	private DrawingPanel panel;
 	private Toolhou mainWindow;
 	private JFileChooser fileChooser;
+	private File currentFile;
 
 	public Toolhou() {
 		super("Touhou Scripting Tool");
@@ -73,7 +83,7 @@ public class Toolhou extends Frame {
 		this.setResizable(false);
 		mainWindow=this;
 		fileChooser = new JFileChooser();
-		FileFilter filter = new FileNameExtensionFilter("TH file", "th");
+		FileFilter filter = new FileNameExtensionFilter("Waypoint file", "way");
 		fileChooser.setFileFilter(filter);
 	}
 
@@ -172,6 +182,16 @@ public class Toolhou extends Frame {
 		
 		return resPos;
 	}	
+	private String getPointListFormatted()
+	{
+		String formatted="";
+		for(Point p: panel.list)
+		{
+			formatted+="["+p.x+","+p.y+"]";
+		}
+		
+		return formatted;
+	}
 	private class WindowHandler extends WindowAdapter implements ActionListener {
 		public void windowClosing(WindowEvent e) {
 			System.exit(0);
@@ -182,7 +202,41 @@ public class Toolhou extends Frame {
 			for (int i = 0; i < menu.getItemCount(); i++)
 				menu.getItem(i).setEnabled(true);
 		}
-
+		private void openFile(File f) throws IOException
+		{
+			panel.stateStack.clear();
+			panel.redoStateStack.clear();
+			ArrayList<Point> listFromFile = new ArrayList<Point>();
+			
+			String content;
+			content = new String(Files.readAllBytes(Paths.get(f.getAbsolutePath())));
+			while(content.contains("]"))
+			{
+				int start = content.indexOf("[");
+				int comma = content.indexOf(",");
+				int end = content.indexOf("]");
+				int x = Integer.parseInt(content.substring(start+1, comma));
+				int y= Integer.parseInt(content.substring(comma+1, end));
+				listFromFile.add(new Point(x, y));
+				content = content.substring(end+1);
+			}
+			panel.list = listFromFile;
+			panel.repaint();
+			
+		}
+		private void saveAs(File f) throws UnsupportedEncodingException, FileNotFoundException, IOException
+		{
+			String path = f.getAbsolutePath();
+			if(!path.contains(".way"))
+			{
+				path+=".way";
+			}
+			try (Writer writer = new BufferedWriter(new OutputStreamWriter(
+		              new FileOutputStream(path), "utf-8"))) 
+			{
+				writer.write(getPointListFormatted());
+			}
+		}
 		public void actionPerformed(ActionEvent e) {
 			//Allows access to the name of the Menu form which item was chosen
 			Menu menu = (Menu)((MenuItem)e.getSource()).getParent();
@@ -191,8 +245,37 @@ public class Toolhou extends Frame {
 				int returnVal = fileChooser.showOpenDialog(Toolhou.this);
 				if(returnVal == JFileChooser.APPROVE_OPTION)
 				{
-					File file = fileChooser.getSelectedFile();
-					System.out.println(file.getAbsolutePath());
+					currentFile = fileChooser.getSelectedFile();
+					try {
+						openFile(currentFile);
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+				}
+			}
+			else if(e.getActionCommand().equalsIgnoreCase("Save"))
+			{
+				try {
+					if(currentFile!=null)
+						saveAs(currentFile);
+					else
+					{
+						int returnVal = fileChooser.showSaveDialog(Toolhou.this);
+						if(returnVal == JFileChooser.APPROVE_OPTION)
+						{
+							try {
+								saveAs(fileChooser.getSelectedFile());
+							} catch (IOException e1) {
+								// TODO Auto-generated catch block
+								e1.printStackTrace();
+							}
+						}
+					}
+						
+				} catch (IOException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
 				}
 			}
 			else if(e.getActionCommand().equalsIgnoreCase("Save as"))
@@ -200,7 +283,12 @@ public class Toolhou extends Frame {
 				int returnVal = fileChooser.showSaveDialog(Toolhou.this);
 				if(returnVal == JFileChooser.APPROVE_OPTION)
 				{
-					System.out.println("File name");
+					try {
+						saveAs(fileChooser.getSelectedFile());
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
 				}
 			}
 			else if (e.getActionCommand().equalsIgnoreCase("exit")) {
