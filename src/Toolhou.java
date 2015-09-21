@@ -265,7 +265,8 @@ public class Toolhou extends Frame {
 						if(returnVal == JFileChooser.APPROVE_OPTION)
 						{
 							try {
-								saveAs(fileChooser.getSelectedFile());
+								currentFile = fileChooser.getSelectedFile();
+								saveAs(currentFile);
 							} catch (IOException e1) {
 								// TODO Auto-generated catch block
 								e1.printStackTrace();
@@ -284,7 +285,8 @@ public class Toolhou extends Frame {
 				if(returnVal == JFileChooser.APPROVE_OPTION)
 				{
 					try {
-						saveAs(fileChooser.getSelectedFile());
+						currentFile = fileChooser.getSelectedFile();
+						saveAs(currentFile);
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
