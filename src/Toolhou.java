@@ -207,7 +207,7 @@ public class DrawingPanel extends Panel implements MouseListener, MouseMotionLis
 		private Stack<ArrayList<Point>> redoStateStack = new Stack<ArrayList<Point>>();
 		public ArrayList<Point> list = new ArrayList<Point>();
 		private boolean dragging = false; 
-		private int dragTolerance = 5;
+		private int pointMarkerSize = 5;
 		private Point dragged = null;
 
 		public void paint(Graphics g) {
@@ -221,7 +221,7 @@ public class DrawingPanel extends Panel implements MouseListener, MouseMotionLis
 			for(int i =0; i < list.size(); i++)
 			{	
 				Point currPoint = list.get(i);
-				g.drawRect(currPoint.x-5, currPoint.y-5, 10, 10);
+				g.drawRect(currPoint.x-pointMarkerSize, currPoint.y-pointMarkerSize, 10, 10);
 				if(i>0)
 				{
 					Point prevPoint = list.get(i-1);
@@ -264,7 +264,7 @@ public class DrawingPanel extends Panel implements MouseListener, MouseMotionLis
 					for(int i = 0 ; i < list.size() ; i++)
 					{
 						Point p = list.get(i);
-						if(Math.abs(e.getPoint().x-p.x)<dragTolerance && Math.abs(e.getPoint().y-p.y)<dragTolerance)
+						if(Math.abs(e.getPoint().x-p.x)<pointMarkerSize && Math.abs(e.getPoint().y-p.y)<pointMarkerSize)
 						{
 							dragged=(Point)list.get(i).clone();
 							list.set(i, dragged);
@@ -296,8 +296,9 @@ public class DrawingPanel extends Panel implements MouseListener, MouseMotionLis
 			{
 				dragged.x=e.getX();
 				dragged.y=e.getY();
+				repaint();
+
 			}
-			repaint();
 		}
 		public void mouseMoved(MouseEvent e)
 		{
