@@ -208,8 +208,12 @@ public class Toolhou extends Frame {
 			panel.redoStateStack.clear();
 			ArrayList<Point> listFromFile = new ArrayList<Point>();
 			
+			String path = f.getAbsolutePath();
+			if(!path.contains(".way"))
+				path+=".way";
+			
 			String content;
-			content = new String(Files.readAllBytes(Paths.get(f.getAbsolutePath())));
+			content = new String(Files.readAllBytes(Paths.get(path)));
 			while(content.contains("]"))
 			{
 				int start = content.indexOf("[");
@@ -229,9 +233,7 @@ public class Toolhou extends Frame {
 		{
 			String path = f.getAbsolutePath();
 			if(!path.contains(".way"))
-			{
 				path+=".way";
-			}
 			try (Writer writer = new BufferedWriter(new OutputStreamWriter(
 		              new FileOutputStream(path), "utf-8"))) 
 			{
