@@ -20,15 +20,12 @@ import java.awt.event.WindowEvent;
 import java.awt.geom.Line2D;
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
 import java.util.ArrayList;
 import java.util.Stack;
 
@@ -40,16 +37,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class Toolhou extends Frame {
 
 	// constants for menu shortcuts
-	private static final int kControlA = 65;
-	private static final int kControlC = 67;
-	private static final int kControlD = 68;
 	private static final int kControlO = 79;
-	private static final int kControlP = 80;
-	private static final int kControlQ = 81;
-	private static final int kControlR = 82;
 	private static final int kControlS = 83;
-	private static final int kControlT = 84;
-	private static final int kControlX = 88;
 	private static final int kControlY = 89;
 	private static final int kControlZ = 90;
 	
@@ -122,7 +111,6 @@ public class Toolhou extends Frame {
 		}
 	}
 
-
 	private void addPanel() {
 		panel = new DrawingPanel();
 		// get size of SimpleDrawingTool frame
@@ -140,10 +128,8 @@ public class Toolhou extends Frame {
 		panel.addMouseMotionListener(panel);
 		this.add(panel);
 	}
-	@SuppressWarnings("unchecked")
 	private void undo()
 	{
-
 		if(!panel.dragging&&panel.stateStack.size()>0)
 		{
 
@@ -168,14 +154,16 @@ public class Toolhou extends Frame {
 	{
 		String targetSize = e.getActionCommand().toString();
 		int resPos=-1;
-		for(int i=0; i<resolutions.length; i++)
+		int i = 0;
+		while(resPos<0)
 		{
 			if(resolutions[i].equals(targetSize))
-			{
-				resPos = i;
-				i=resolutions.length;
-			}
+				resPos=i;
+			else
+				i++;
 		}
+		
+		
 		int width = Integer.parseInt(targetSize.substring(targetSize.indexOf("-")+1, targetSize.indexOf("x")).trim());
 		int height = Integer.parseInt(targetSize.substring(targetSize.indexOf("x")+1).trim());
 		mainWindow.setSize(width, height);
@@ -198,11 +186,12 @@ public class Toolhou extends Frame {
 		}
 
 		private void clearMenuSelection(int menuNum) {
+			//Sets all menu items to enabled
 			Menu menu = getMenuBar().getMenu(menuNum);
 			for (int i = 0; i < menu.getItemCount(); i++)
 				menu.getItem(i).setEnabled(true);
 		}
-		private void openFile(File f) throws IOException
+		private void openFile(File f)
 		{
 			panel.stateStack.clear();
 			panel.redoStateStack.clear();
@@ -212,8 +201,14 @@ public class Toolhou extends Frame {
 			if(!path.contains(".way"))
 				path+=".way";
 			
-			String content;
-			content = new String(Files.readAllBytes(Paths.get(path)));
+			String content=null;
+			try
+			{
+				content = new String(Files.readAllBytes(Paths.get(path)));
+			} catch (IOException e)
+			{
+				e.printStackTrace();
+			}
 			while(content.contains("]"))
 			{
 				int start = content.indexOf("[");
@@ -229,15 +224,20 @@ public class Toolhou extends Frame {
 			panel.repaint();
 			
 		}
-		private void saveAs(File f) throws UnsupportedEncodingException, FileNotFoundException, IOException
+		private void saveAs(File f)
 		{
 			String path = f.getAbsolutePath();
 			if(!path.contains(".way"))
 				path+=".way";
+			
 			try (Writer writer = new BufferedWriter(new OutputStreamWriter(
-		              new FileOutputStream(path), "utf-8"))) 
+									new FileOutputStream(path), "utf-8"))) 
 			{
 				writer.write(getPointListFormatted());
+			}
+			catch (IOException e)
+			{
+				e.printStackTrace();
 			}
 		}
 		public void actionPerformed(ActionEvent e) {
@@ -249,51 +249,29 @@ public class Toolhou extends Frame {
 				if(returnVal == JFileChooser.APPROVE_OPTION)
 				{
 					currentFile = fileChooser.getSelectedFile();
-					try {
-						openFile(currentFile);
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
+					openFile(currentFile);
 				}
 			}
 			else if(e.getActionCommand().equalsIgnoreCase("Save"))
 			{
-				try {
-					if(currentFile!=null)
-						saveAs(currentFile);
-					else
+			
+				if(currentFile!=null)
+					saveAs(currentFile);
+				else
+				{
+					if(fileChooser.showSaveDialog(Toolhou.this) == JFileChooser.APPROVE_OPTION)
 					{
-						int returnVal = fileChooser.showSaveDialog(Toolhou.this);
-						if(returnVal == JFileChooser.APPROVE_OPTION)
-						{
-							try {
-								currentFile = fileChooser.getSelectedFile();
-								saveAs(currentFile);
-							} catch (IOException e1) {
-								// TODO Auto-generated catch block
-								e1.printStackTrace();
-							}
-						}
+						currentFile = fileChooser.getSelectedFile();
+						saveAs(currentFile);
 					}
-						
-				} catch (IOException e1) {
-					// TODO Auto-generated catch block
-					e1.printStackTrace();
-				}
+				}			
 			}
 			else if(e.getActionCommand().equalsIgnoreCase("Save as"))
 			{
-				int returnVal = fileChooser.showSaveDialog(Toolhou.this);
-				if(returnVal == JFileChooser.APPROVE_OPTION)
+				if(fileChooser.showSaveDialog(Toolhou.this) == JFileChooser.APPROVE_OPTION)
 				{
-					try {
-						currentFile = fileChooser.getSelectedFile();
-						saveAs(currentFile);
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
+					currentFile = fileChooser.getSelectedFile();
+					saveAs(currentFile);
 				}
 			}
 			else if (e.getActionCommand().equalsIgnoreCase("exit")) {
@@ -306,7 +284,7 @@ public class Toolhou extends Frame {
 			else if(menu.getLabel().equals("Window"))
 			{
 				int resPos= handleResize(e);
-				
+				//Clears Window Menu 
 				clearMenuSelection(2);
 				menu.getItem(resPos).setEnabled(false);
 			}
@@ -351,7 +329,6 @@ public class DrawingPanel extends Panel implements MouseListener, MouseMotionLis
 			}
 		}
 
-		@SuppressWarnings("unchecked")
 		public void mouseClicked(MouseEvent e) {
 			//Left Click
 			if(e.getButton() == MouseEvent.BUTTON1 && !dragging)
@@ -392,7 +369,6 @@ public class DrawingPanel extends Panel implements MouseListener, MouseMotionLis
 			}
 		}
 
-		@SuppressWarnings("unchecked")
 		public void mouseReleased(MouseEvent e) {
 			if(dragging)
 			{
