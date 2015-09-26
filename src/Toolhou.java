@@ -183,21 +183,32 @@ public class Toolhou extends Frame {
 	}
 	private class WindowHandler extends WindowAdapter implements ActionListener {
 		private final String QUIT_MESSAGE= "You may have unsaved work. "+
-				"Are you sure you want to quit?";
+				"Save before quit?";
 		
-		public void windowClosing(WindowEvent e) {
+		public void windowClosing(WindowEvent e) 
+		{
 			quitWithPrompt();
 		}
 		private void quitWithPrompt()
 		{
-			String buttonLabels[] = {"Yes","No"};
+			String buttonLabels[] = {"Save", "Don't Save", "Cancel"};
 	        int choice= JOptionPane.showOptionDialog(null, QUIT_MESSAGE, "Exit", JOptionPane.DEFAULT_OPTION,
 	        			JOptionPane.WARNING_MESSAGE, null, buttonLabels, buttonLabels[1]);
-	        if(choice==JOptionPane.YES_OPTION)
+	        if(choice==0)
 	        {
-	            System.exit(0);
+				if(fileChooser.showSaveDialog(Toolhou.this) == JFileChooser.APPROVE_OPTION)
+				{
+					currentFile = fileChooser.getSelectedFile();
+					saveAs(currentFile);
+					System.exit(0);
+				}	     
 	        }
-		}
+	        else if(choice==1)
+	        {
+	        	System.exit(0);
+	        }
+	        //else cancel quit
+	    }
 		private void clearMenuSelection(int menuNum) {
 			//Sets all menu items to enabled
 			Menu menu = getMenuBar().getMenu(menuNum);
