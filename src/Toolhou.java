@@ -62,6 +62,7 @@ public class Toolhou extends Frame {
 	private JFileChooser fileChooser;
 	private File currentFile;
 
+
 	public Toolhou() {
 		super("NeetScript");
 		addMenu();
@@ -181,10 +182,22 @@ public class Toolhou extends Frame {
 		return formatted;
 	}
 	private class WindowHandler extends WindowAdapter implements ActionListener {
+		private final String QUIT_MESSAGE= "You may have unsaved work. "+
+				"Are you sure you want to quit?";
+		
 		public void windowClosing(WindowEvent e) {
-			System.exit(0);
+			quitWithPrompt();
 		}
-
+		private void quitWithPrompt()
+		{
+			String buttonLabels[] = {"Yes","No"};
+	        int choice= JOptionPane.showOptionDialog(null, QUIT_MESSAGE, "Exit", JOptionPane.DEFAULT_OPTION,
+	        			JOptionPane.WARNING_MESSAGE, null, buttonLabels, buttonLabels[1]);
+	        if(choice==JOptionPane.YES_OPTION)
+	        {
+	            System.exit(0);
+	        }
+		}
 		private void clearMenuSelection(int menuNum) {
 			//Sets all menu items to enabled
 			Menu menu = getMenuBar().getMenu(menuNum);
@@ -275,7 +288,7 @@ public class Toolhou extends Frame {
 				}
 			}
 			else if (e.getActionCommand().equalsIgnoreCase("exit")) {
-				System.exit(0);
+				quitWithPrompt();
 			} else if (e.getActionCommand().equalsIgnoreCase("Undo")) {
 				undo();
 			} else if (e.getActionCommand().equalsIgnoreCase("Redo")) {
