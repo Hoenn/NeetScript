@@ -30,11 +30,12 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-public class Toolhou extends Frame {
+public class Toolhou extends JFrame {
 
 	// constants for menu shortcuts
 	private static final int kControlO = 79;
