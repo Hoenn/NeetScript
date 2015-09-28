@@ -37,6 +37,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class Toolhou extends JFrame {
 
+	private static final long serialVersionUID = 1L;
 	// constants for menu shortcuts
 	private static final int kControlO = 79;
 	private static final int kControlS = 83;
@@ -164,8 +165,7 @@ public class Toolhou extends JFrame {
 			else
 				i++;
 		}
-		
-		
+			
 		int width = Integer.parseInt(targetSize.substring(targetSize.indexOf("-")+1, targetSize.indexOf("x")).trim());
 		int height = Integer.parseInt(targetSize.substring(targetSize.indexOf("x")+1).trim());
 		mainWindow.setSize(width, height);
