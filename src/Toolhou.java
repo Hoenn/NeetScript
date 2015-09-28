@@ -73,6 +73,7 @@ public class Toolhou extends JFrame {
 		this.setSize(640, 480);
 		this.setVisible(true);
 		this.setResizable(false);
+		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		mainWindow=this;
 		fileChooser = new JFileChooser();
 		FileFilter filter = new FileNameExtensionFilter("Waypoint file", "way");
@@ -208,7 +209,7 @@ public class Toolhou extends JFrame {
 	        {
 	        	System.exit(0);
 	        }
-	        //else cancel quit
+	       
 	    }
 		private void clearMenuSelection(int menuNum) {
 			//Sets all menu items to enabled
@@ -329,10 +330,14 @@ public class DrawingPanel extends Panel implements MouseListener, MouseMotionLis
 	private boolean dragging = false; 
 	private int pointMarkerSize = 10;
 	private Point dragged = null;
+	private Color gridColor = new Color(227, 227, 227);
 
 	public void paint(Graphics g) {
 		
 		Graphics2D g2 = (Graphics2D)g;
+		
+		drawGrid(g2);
+		
 		if(dragging)
 			g.setColor(Color.red);
 		else
@@ -355,7 +360,23 @@ public class DrawingPanel extends Panel implements MouseListener, MouseMotionLis
 			g2.draw(new Line2D.Double(list.get(0), list.get(list.size()-1)));
 		}
 	}
+	private void drawGrid(Graphics2D g2)
+	{
+		g2.setColor(gridColor);
+		int w = mainWindow.getWidth();
+		int h = mainWindow.getHeight();
+		int squareSize = 10;
+		for(int i=0; i<h; i+=squareSize)
+		{
+			g2.draw(new Line2D.Double(0, i, w, i));
+			
+		}
+		for(int j=0; j<w; j+= squareSize)
+		{
+			g2.draw(new Line2D.Double(j, 0, j, h));
+		}
 
+	}
 	public void mouseClicked(MouseEvent e) {
 		//Left Click
 		if(e.getButton() == MouseEvent.BUTTON1 && !dragging)
