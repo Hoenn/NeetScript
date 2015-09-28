@@ -348,6 +348,7 @@ public class DrawingPanel extends Panel implements MouseListener, MouseMotionLis
 				g2.draw(new Line2D.Double(prevPoint, currPoint));
 			}
 		}
+		//Connects last point to first point
 		if(list.size()>1)
 		{
 			g.setColor(Color.green);
