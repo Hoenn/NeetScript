@@ -28,9 +28,12 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Stack;
 
+import javax.swing.JColorChooser;
+import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -38,6 +41,7 @@ public class Toolhou extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	// constants for menu shortcuts
+	private static final int kControlG = 71;
 	private static final int kControlO = 79;
 	private static final int kControlS = 83;
 	private static final int kControlY = 89;
@@ -61,6 +65,7 @@ public class Toolhou extends JFrame {
 	private DrawingPanel panel;
 	private Toolhou mainWindow;
 	private JFileChooser fileChooser;
+	private JColorChooser colorChooser;
 	private File currentFile;
 
 
@@ -74,6 +79,9 @@ public class Toolhou extends JFrame {
 		this.setResizable(false);
 		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		mainWindow=this;
+		colorChooser= new JColorChooser();
+		colorChooser.setPreviewPanel(new JPanel());
+		colorChooser.setColor(panel.gridColor);
 		fileChooser = new JFileChooser();
 		FileFilter filter = new FileNameExtensionFilter("Waypoint file", "way");
 		fileChooser.setFileFilter(filter);
@@ -98,6 +106,8 @@ public class Toolhou extends JFrame {
 		
 		edit.add(new MenuItem("Undo", new MenuShortcut(kControlZ))).addActionListener(new WindowHandler());
 		edit.add(new MenuItem("Redo", new MenuShortcut(kControlY))).addActionListener(new WindowHandler());
+		edit.add(new MenuItem("Toggle Graph", new MenuShortcut(kControlG))).addActionListener(new WindowHandler());
+		edit.add(new MenuItem("Graph Color")).addActionListener(new WindowHandler());
 		for(int i=0; i<resolutions.length; i++)
 		{
 			window.add(new MenuItem(resolutions[i])).addActionListener(new WindowHandler());
@@ -133,6 +143,7 @@ public class Toolhou extends JFrame {
 	}
 	private void undo()
 	{
+		
 		if(!panel.dragging&&panel.stateStack.size()>0)
 		{
 
@@ -152,6 +163,20 @@ public class Toolhou extends JFrame {
 			panel.list = panel.getShallowList(panel.stateStack.peek());
 			panel.repaint();
 		}
+	}
+	private void toggleGrid()
+	{
+		panel.grid=!panel.grid;
+		panel.repaint();
+	}
+	private void changeGridColor()
+	{
+		JDialog d = JColorChooser.createDialog(null,"Grid Color",true,colorChooser,null,null); 
+	    d.setVisible(true);
+	    
+		panel.gridColor = colorChooser.getColor();
+		
+		panel.repaint();
 	}
 	private int handleResize(ActionEvent e)
 	{
@@ -305,7 +330,12 @@ public class Toolhou extends JFrame {
 				undo();
 			} else if (e.getActionCommand().equalsIgnoreCase("Redo")) {
 				redo();
-			} 
+			} else if (e.getActionCommand().equalsIgnoreCase("Graph")) {
+				toggleGrid();
+			} else if(e.getActionCommand().equalsIgnoreCase("Graph Color"))
+			{
+				changeGridColor();
+			}
 			else if(menu.getLabel().equals("Window"))
 			{
 				int resPos= handleResize(e);
@@ -329,13 +359,14 @@ public class DrawingPanel extends Panel implements MouseListener, MouseMotionLis
 	private boolean dragging = false; 
 	private int pointMarkerSize = 10;
 	private Point dragged = null;
-	private Color gridColor = new Color(227, 227, 227);
+	private boolean grid = false;
+	private Color gridColor = new Color(238, 238, 238);
 
 	public void paint(Graphics g) {
 		
 		Graphics2D g2 = (Graphics2D)g;
-		
-		drawGrid(g2);
+		if(grid)
+			drawGrid(g2);
 		
 		if(dragging)
 			g.setColor(Color.red);
