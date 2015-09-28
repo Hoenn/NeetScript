@@ -137,7 +137,7 @@ public class Toolhou extends JFrame {
 
 			panel.redoStateStack.push(panel.stateStack.pop());
 			if(!panel.stateStack.isEmpty())
-				panel.list = (ArrayList<Point>)panel.stateStack.peek().clone();
+				panel.list = panel.getShallowList(panel.stateStack.peek());
 			else
 				panel.list.clear();
 			panel.repaint();
@@ -148,7 +148,7 @@ public class Toolhou extends JFrame {
 		if(!panel.dragging&&panel.redoStateStack.size()>0)
 		{
 			panel.stateStack.push(panel.redoStateStack.pop());
-			panel.list = (ArrayList<Point>)panel.stateStack.peek().clone();
+			panel.list = panel.getShallowList(panel.stateStack.peek());
 			panel.repaint();
 		}
 	}
@@ -245,7 +245,7 @@ public class Toolhou extends JFrame {
 				content = content.substring(end+1);
 			}
 			panel.list = listFromFile;
-			panel.stateStack.push((ArrayList<Point>)listFromFile.clone());
+			panel.stateStack.push(panel.getShallowList(listFromFile));
 			panel.repaint();
 			
 		}
@@ -320,106 +320,112 @@ public class Toolhou extends JFrame {
 		}
 	}
 
-public class DrawingPanel extends Panel implements MouseListener, MouseMotionListener{
+public class DrawingPanel extends Panel implements MouseListener, MouseMotionListener
+{		
+	private static final long serialVersionUID = 1L;
+	private Stack<ArrayList<Point>> stateStack = new Stack<ArrayList<Point>>();
+	private Stack<ArrayList<Point>> redoStateStack = new Stack<ArrayList<Point>>();
+	public ArrayList<Point> list = new ArrayList<Point>();
+	private boolean dragging = false; 
+	private int pointMarkerSize = 10;
+	private Point dragged = null;
+
+	public void paint(Graphics g) {
 		
-		private Stack<ArrayList<Point>> stateStack = new Stack<ArrayList<Point>>();
-		private Stack<ArrayList<Point>> redoStateStack = new Stack<ArrayList<Point>>();
-		public ArrayList<Point> list = new ArrayList<Point>();
-		private boolean dragging = false; 
-		private int pointMarkerSize = 10;
-		private Point dragged = null;
+		Graphics2D g2 = (Graphics2D)g;
+		if(dragging)
+			g.setColor(Color.red);
+		else
+			g.setColor(Color.blue);
+		
+		for(int i =0; i < list.size(); i++)
+		{	
+			Point currPoint = list.get(i);
+			g.drawRect(currPoint.x-pointMarkerSize/2, currPoint.y-pointMarkerSize/2, pointMarkerSize, pointMarkerSize);
+			if(i>0)
+			{
+				Point prevPoint = list.get(i-1);
+				g2.draw(new Line2D.Double(prevPoint, currPoint));
+			}
+		}
+		if(list.size()>1)
+		{
+			g.setColor(Color.green);
+			g2.draw(new Line2D.Double(list.get(0), list.get(list.size()-1)));
+		}
+	}
 
-		public void paint(Graphics g) {
-			
-			Graphics2D g2 = (Graphics2D)g;
-			if(dragging)
-				g.setColor(Color.red);
-			else
-				g.setColor(Color.blue);
-			
-			for(int i =0; i < list.size(); i++)
-			{	
-				Point currPoint = list.get(i);
-				g.drawRect(currPoint.x-pointMarkerSize/2, currPoint.y-pointMarkerSize/2, pointMarkerSize, pointMarkerSize);
-				if(i>0)
+	public void mouseClicked(MouseEvent e) {
+		//Left Click
+		if(e.getButton() == MouseEvent.BUTTON1 && !dragging)
+		{
+			list.add(e.getPoint());
+			stateStack.push(getShallowList(list));
+
+			if(redoStateStack.size()>0)
+				redoStateStack.clear();
+		}
+		
+		repaint();
+	}
+
+	public void mouseEntered(MouseEvent e) {
+	}
+
+	public void mouseExited(MouseEvent e) {
+	}
+
+	public void mousePressed(MouseEvent e) {
+		if(e.getButton() == MouseEvent.BUTTON3)
+		{
+			if(list.size()>0)
+			{
+				for(int i = 0 ; i < list.size() ; i++)
 				{
-					Point prevPoint = list.get(i-1);
-					g2.draw(new Line2D.Double(prevPoint, currPoint));
-				}
-			}
-			if(list.size()>1)
-			{
-				g.setColor(Color.green);
-				g2.draw(new Line2D.Double(list.get(0), list.get(list.size()-1)));
-			}
-		}
-
-		public void mouseClicked(MouseEvent e) {
-			//Left Click
-			if(e.getButton() == MouseEvent.BUTTON1 && !dragging)
-			{
-				list.add(e.getPoint());
-				stateStack.push((ArrayList<Point>)list.clone());
-
-				if(redoStateStack.size()>0)
-					redoStateStack.clear();
-			}
-			
-			repaint();
-		}
-
-		public void mouseEntered(MouseEvent e) {
-		}
-
-		public void mouseExited(MouseEvent e) {
-		}
-
-		public void mousePressed(MouseEvent e) {
-			if(e.getButton() == MouseEvent.BUTTON3)
-			{
-				if(list.size()>0)
-				{
-					for(int i = 0 ; i < list.size() ; i++)
+					Point p = list.get(i);
+					if(Math.abs(e.getPoint().x-p.x)<pointMarkerSize && Math.abs(e.getPoint().y-p.y)<pointMarkerSize)
 					{
-						Point p = list.get(i);
-						if(Math.abs(e.getPoint().x-p.x)<pointMarkerSize && Math.abs(e.getPoint().y-p.y)<pointMarkerSize)
-						{
-							dragged=(Point)list.get(i).clone();
-							list.set(i, dragged);
-							dragging= true;
-							i=list.size();
-						}
+						dragged=(Point)list.get(i).clone();
+						list.set(i, dragged);
+						dragging= true;
+						i=list.size();
 					}
 				}
 			}
 		}
+	}
 
-		public void mouseReleased(MouseEvent e) {
-			if(dragging)
-			{
-				dragging=false;
-				dragged=null;
-				stateStack.push((ArrayList<Point>)list.clone());
-				if(redoStateStack.size()>0)
-					redoStateStack.clear();
-				
-				repaint();
-			}
-		}
-
-		public void mouseDragged(MouseEvent e)
+	public void mouseReleased(MouseEvent e) {
+		if(dragging)
 		{
-			if(dragging)
-			{
-				dragged.x=e.getX();
-				dragged.y=e.getY();
-				repaint();
-
-			}
-		}
-		public void mouseMoved(MouseEvent e)
-		{
+			dragging=false;
+			dragged=null;
+			stateStack.push(getShallowList(list));
+			if(redoStateStack.size()>0)
+				redoStateStack.clear();
 			
+			repaint();
+		}
+	}
+
+	public void mouseDragged(MouseEvent e)
+	{
+		if(dragging)
+		{
+			dragged.x=e.getX();
+			dragged.y=e.getY();
+			repaint();
+
+		}
+	}
+	public void mouseMoved(MouseEvent e)
+	{
+		
+	}
+	@SuppressWarnings("unchecked")
+	public ArrayList<Point> getShallowList(ArrayList<Point> l)
+		{
+			return (ArrayList<Point>)l.clone();
 		}
 	}
 }
