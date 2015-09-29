@@ -7,7 +7,6 @@ import java.awt.Menu;
 import java.awt.MenuBar;
 import java.awt.MenuItem;
 import java.awt.MenuShortcut;
-import java.awt.Panel;
 import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -34,6 +33,9 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSlider;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -66,10 +68,12 @@ public class Toolhou extends JFrame {
 	private Toolhou mainWindow;
 	private JFileChooser fileChooser;
 	private JColorChooser colorChooser;
+	private JSlider gridSizeSlider;
 	private File currentFile;
 
 
-	public Toolhou() {
+	public Toolhou() 
+	{
 		super("NeetScript");
 		addMenu();
 		addPanel();
@@ -79,19 +83,38 @@ public class Toolhou extends JFrame {
 		this.setResizable(false);
 		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		mainWindow=this;
+		
 		colorChooser= new JColorChooser();
 		colorChooser.setPreviewPanel(new JPanel());
 		colorChooser.setColor(panel.gridColor);
+		
 		fileChooser = new JFileChooser();
 		FileFilter filter = new FileNameExtensionFilter("Waypoint file", "way");
 		fileChooser.setFileFilter(filter);
+		
+		gridSizeSlider = new JSlider(1, 100, panel.gridSize);
+		gridSizeSlider.setMinorTickSpacing(10);
+		gridSizeSlider.setMajorTickSpacing(20);
+		gridSizeSlider.setPaintTicks(true);
+		gridSizeSlider.addChangeListener(new ChangeListener()
+		{
+			public void stateChanged(ChangeEvent e) {
+		        JSlider source = (JSlider)e.getSource();
+		        //This Line will keep grid from changing until slider is released
+		        //if (!source.getValueIsAdjusting()) {
+		            panel.gridSize = (int)source.getValue();
+		            panel.repaint();      
+		    }
+		});
 	}
 
-	public static void main(String args[]) {
+	public static void main(String args[]) 
+	{
 		new Toolhou();
 	}
 
-	private void addMenu() {
+	private void addMenu() 
+	{
 		// Add menu bar to our frame
 		MenuBar menuBar = new MenuBar();
 		Menu file = new Menu("File");
@@ -108,6 +131,7 @@ public class Toolhou extends JFrame {
 		edit.add(new MenuItem("Redo", new MenuShortcut(kControlY))).addActionListener(new WindowHandler());
 		edit.add(new MenuItem("Toggle Grid", new MenuShortcut(kControlG))).addActionListener(new WindowHandler());
 		edit.add(new MenuItem("Grid Color")).addActionListener(new WindowHandler());
+		edit.add(new MenuItem("Grid Size")).addActionListener(new WindowHandler());
 		for(int i=0; i<resolutions.length; i++)
 		{
 			window.add(new MenuItem(resolutions[i])).addActionListener(new WindowHandler());
@@ -124,7 +148,8 @@ public class Toolhou extends JFrame {
 		}
 	}
 
-	private void addPanel() {
+	private void addPanel() 
+	{
 		panel = new DrawingPanel();
 		// get size of SimpleDrawingTool frame
 		Dimension d = this.getSize();
@@ -143,7 +168,6 @@ public class Toolhou extends JFrame {
 	}
 	private void undo()
 	{
-		
 		if(!panel.dragging&&panel.stateStack.size()>0)
 		{
 
@@ -178,7 +202,16 @@ public class Toolhou extends JFrame {
 		
 		panel.repaint();
 	}
-	private int handleResize(ActionEvent e)
+	private void changeGridSize()
+	{
+		
+		JDialog d = new JDialog(new JFrame(),"Grid Size");
+		d.setBounds(0, 0, 200, 100);
+		d.add(gridSizeSlider);
+		d.setVisible(true);
+		panel.gridSize=gridSizeSlider.getValue();
+	}
+	private int handleWindowResize(ActionEvent e)
 	{
 		String targetSize = e.getActionCommand().toString();
 		int resPos=-1;
@@ -235,7 +268,8 @@ public class Toolhou extends JFrame {
 	        }
 	       
 	    }
-		private void clearMenuSelection(int menuNum) {
+		private void clearMenuSelection(int menuNum) 
+		{
 			//Sets all menu items to enabled
 			Menu menu = getMenuBar().getMenu(menuNum);
 			for (int i = 0; i < menu.getItemCount(); i++)
@@ -290,7 +324,8 @@ public class Toolhou extends JFrame {
 				e.printStackTrace();
 			}
 		}
-		public void actionPerformed(ActionEvent e) {
+		public void actionPerformed(ActionEvent e) 
+		{
 			//Allows access to the name of the Menu form which item was chosen
 			Menu menu = (Menu)((MenuItem)e.getSource()).getParent();
 			if(e.getActionCommand().equalsIgnoreCase("Open"))
@@ -324,7 +359,7 @@ public class Toolhou extends JFrame {
 					saveAs(currentFile);
 				}
 			}
-			else if (e.getActionCommand().equalsIgnoreCase("exit")) {
+			else if (e.getActionCommand().equalsIgnoreCase("Exit")) {
 				quitWithPrompt();
 			} else if (e.getActionCommand().equalsIgnoreCase("Undo")) {
 				undo();
@@ -332,13 +367,14 @@ public class Toolhou extends JFrame {
 				redo();
 			} else if (e.getActionCommand().equalsIgnoreCase("Toggle Grid")) {
 				toggleGrid();
-			} else if(e.getActionCommand().equalsIgnoreCase("Grid Color"))
-			{
+			} else if(e.getActionCommand().equalsIgnoreCase("Grid Color")){
 				changeGridColor();
+			} else if (e.getActionCommand().equalsIgnoreCase("Grid Size")) {
+				changeGridSize();
 			}
 			else if(menu.getLabel().equals("Window"))
 			{
-				int resPos= handleResize(e);
+				int resPos= handleWindowResize(e);
 				//Clears Window Menu 
 				clearMenuSelection(2);
 				menu.getItem(resPos).setEnabled(false);
@@ -350,136 +386,142 @@ public class Toolhou extends JFrame {
 		}
 	}
 
-public class DrawingPanel extends JPanel implements MouseListener, MouseMotionListener
-{		
-	private static final long serialVersionUID = 1L;
-	private Stack<ArrayList<Point>> stateStack = new Stack<ArrayList<Point>>();
-	private Stack<ArrayList<Point>> redoStateStack = new Stack<ArrayList<Point>>();
-	public ArrayList<Point> list = new ArrayList<Point>();
-	private boolean dragging = false; 
-	private int pointMarkerSize = 10;
-	private Point dragged = null;
-	private boolean grid = true;
-	private Color gridColor = new Color(238, 238, 238);
-
-	public void paint(Graphics g) {
-		//Clears screen, fixes tearing
-		super.paintComponent(g);
+	public class DrawingPanel extends JPanel implements MouseListener, MouseMotionListener
+	{		
+		private static final long serialVersionUID = 1L;
 		
-		Graphics2D g2 = (Graphics2D)g;
-		if(grid)
-			drawGrid(g2);
+		public ArrayList<Point> list = new ArrayList<Point>();
+		private Stack<ArrayList<Point>> stateStack = new Stack<ArrayList<Point>>();
+		private Stack<ArrayList<Point>> redoStateStack = new Stack<ArrayList<Point>>();
 		
-		if(dragging)
-			g.setColor(Color.red);
-		else
-			g.setColor(Color.blue);
+		private boolean dragging = false; 
+		private Point dragged = null;
 		
-		for(int i =0; i < list.size(); i++)
-		{	
-			Point currPoint = list.get(i);
-			g.drawRect(currPoint.x-pointMarkerSize/2, currPoint.y-pointMarkerSize/2, pointMarkerSize, pointMarkerSize);
-			if(i>0)
+		private int pointMarkerSize = 10;
+		
+		private boolean grid = true;
+		private int gridSize = 10;
+		private Color gridColor = new Color(238, 238, 238);
+	
+		public void paint(Graphics g) 
+		{
+			//Clears screen, fixes tearing
+			super.paintComponent(g);
+			
+			Graphics2D g2 = (Graphics2D)g;
+			if(grid)
+				drawGrid(g2);
+			
+			if(dragging)
+				g.setColor(Color.red);
+			else
+				g.setColor(Color.blue);
+			
+			for(int i =0; i < list.size(); i++)
+			{	
+				Point currPoint = list.get(i);
+				g.drawRect(currPoint.x-pointMarkerSize/2, currPoint.y-pointMarkerSize/2, pointMarkerSize, pointMarkerSize);
+				if(i>0)
+				{
+					Point prevPoint = list.get(i-1);
+					g2.draw(new Line2D.Double(prevPoint, currPoint));
+				}
+			}
+			//Connects last point to first point
+			if(list.size()>1)
 			{
-				Point prevPoint = list.get(i-1);
-				g2.draw(new Line2D.Double(prevPoint, currPoint));
+				g.setColor(Color.green);
+				g2.draw(new Line2D.Double(list.get(0), list.get(list.size()-1)));
 			}
 		}
-		//Connects last point to first point
-		if(list.size()>1)
+		private void drawGrid(Graphics2D g2)
 		{
-			g.setColor(Color.green);
-			g2.draw(new Line2D.Double(list.get(0), list.get(list.size()-1)));
-		}
-	}
-	private void drawGrid(Graphics2D g2)
-	{
-		g2.setColor(gridColor);
-		int w = mainWindow.getWidth();
-		int h = mainWindow.getHeight();
-		int squareSize = 10;
-		for(int i=0; i<h; i+=squareSize)
-		{
-			g2.draw(new Line2D.Double(0, i, w, i));
-			
-		}
-		for(int j=0; j<w; j+= squareSize)
-		{
-			g2.draw(new Line2D.Double(j, 0, j, h));
-		}
-
-	}
-	public void mouseClicked(MouseEvent e) {
-		//Left Click
-		if(e.getButton() == MouseEvent.BUTTON1 && !dragging)
-		{
-			list.add(e.getPoint());
-			stateStack.push(getShallowList(list));
-
-			if(redoStateStack.size()>0)
-				redoStateStack.clear();
-		}
-		
-		repaint();
-	}
-
-	public void mouseEntered(MouseEvent e) {
-	}
-
-	public void mouseExited(MouseEvent e) {
-	}
-
-	public void mousePressed(MouseEvent e) {
-		if(e.getButton() == MouseEvent.BUTTON3)
-		{
-			if(list.size()>0)
+			g2.setColor(gridColor);
+			int w = mainWindow.getWidth();
+			int h = mainWindow.getHeight();
+			for(int i=0; i<h; i+=gridSize)
 			{
-				for(int i = 0 ; i < list.size() ; i++)
+				g2.draw(new Line2D.Double(0, i, w, i));
+				
+			}
+			for(int j=0; j<w; j+= gridSize)
+			{
+				g2.draw(new Line2D.Double(j, 0, j, h));
+			}
+	
+		}
+		public void mouseClicked(MouseEvent e) 
+		{
+			//Left Click
+			if(e.getButton() == MouseEvent.BUTTON1 && !dragging)
+			{
+				list.add(e.getPoint());
+				stateStack.push(getShallowList(list));
+	
+				if(redoStateStack.size()>0)
+					redoStateStack.clear();
+			}
+			
+			repaint();
+		}
+	
+		public void mousePressed(MouseEvent e) 
+		{
+			if(e.getButton() == MouseEvent.BUTTON3)
+			{
+				if(list.size()>0)
 				{
-					Point p = list.get(i);
-					if(Math.abs(e.getPoint().x-p.x)<pointMarkerSize && Math.abs(e.getPoint().y-p.y)<pointMarkerSize)
+					for(int i = 0 ; i < list.size() ; i++)
 					{
-						dragged=(Point)list.get(i).clone();
-						list.set(i, dragged);
-						dragging= true;
-						i=list.size();
+						Point p = list.get(i);
+						if(Math.abs(e.getPoint().x-p.x)<pointMarkerSize && Math.abs(e.getPoint().y-p.y)<pointMarkerSize)
+						{
+							dragged=(Point)list.get(i).clone();
+							list.set(i, dragged);
+							dragging= true;
+							i=list.size();
+						}
 					}
 				}
 			}
 		}
-	}
-
-	public void mouseReleased(MouseEvent e) {
-		if(dragging)
+	
+		public void mouseReleased(MouseEvent e) 
 		{
-			dragging=false;
-			dragged=null;
-			stateStack.push(getShallowList(list));
-			if(redoStateStack.size()>0)
-				redoStateStack.clear();
-			
-			repaint();
+			if(dragging)
+			{
+				dragging=false;
+				dragged=null;
+				stateStack.push(getShallowList(list));
+				if(redoStateStack.size()>0)
+					redoStateStack.clear();
+				
+				repaint();
+			}
 		}
-	}
-
-	public void mouseDragged(MouseEvent e)
-	{
-		if(dragging)
+	
+		public void mouseDragged(MouseEvent e)
 		{
-			dragged.x=e.getX();
-			dragged.y=e.getY();
-			repaint();
-
+			if(dragging)
+			{
+				dragged.x=e.getX();
+				dragged.y=e.getY();
+				repaint();
+	
+			}
 		}
-	}
-	public void mouseMoved(MouseEvent e)
-	{
 		
-	}
-	@SuppressWarnings("unchecked")
-	public ArrayList<Point> getShallowList(ArrayList<Point> l)
+		@SuppressWarnings("unchecked")
+		public ArrayList<Point> getShallowList(ArrayList<Point> l)
 		{
 			return (ArrayList<Point>)l.clone();
 		}
-	}
+		//Unimplemented Methods
+		public void mouseMoved(MouseEvent e){	
+		}
+		public void mouseEntered(MouseEvent e) {
+		}
+		public void mouseExited(MouseEvent e) {
+		}
+	}	
 }
