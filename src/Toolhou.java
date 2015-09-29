@@ -106,8 +106,8 @@ public class Toolhou extends JFrame {
 		
 		edit.add(new MenuItem("Undo", new MenuShortcut(kControlZ))).addActionListener(new WindowHandler());
 		edit.add(new MenuItem("Redo", new MenuShortcut(kControlY))).addActionListener(new WindowHandler());
-		edit.add(new MenuItem("Toggle Graph", new MenuShortcut(kControlG))).addActionListener(new WindowHandler());
-		edit.add(new MenuItem("Graph Color")).addActionListener(new WindowHandler());
+		edit.add(new MenuItem("Toggle Grid", new MenuShortcut(kControlG))).addActionListener(new WindowHandler());
+		edit.add(new MenuItem("Grid Color")).addActionListener(new WindowHandler());
 		for(int i=0; i<resolutions.length; i++)
 		{
 			window.add(new MenuItem(resolutions[i])).addActionListener(new WindowHandler());
@@ -330,9 +330,9 @@ public class Toolhou extends JFrame {
 				undo();
 			} else if (e.getActionCommand().equalsIgnoreCase("Redo")) {
 				redo();
-			} else if (e.getActionCommand().equalsIgnoreCase("Graph")) {
+			} else if (e.getActionCommand().equalsIgnoreCase("Toggle Grid")) {
 				toggleGrid();
-			} else if(e.getActionCommand().equalsIgnoreCase("Graph Color"))
+			} else if(e.getActionCommand().equalsIgnoreCase("Grid Color"))
 			{
 				changeGridColor();
 			}
@@ -359,7 +359,7 @@ public class DrawingPanel extends Panel implements MouseListener, MouseMotionLis
 	private boolean dragging = false; 
 	private int pointMarkerSize = 10;
 	private Point dragged = null;
-	private boolean grid = false;
+	private boolean grid = true;
 	private Color gridColor = new Color(238, 238, 238);
 
 	public void paint(Graphics g) {
