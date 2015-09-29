@@ -350,7 +350,7 @@ public class Toolhou extends JFrame {
 		}
 	}
 
-public class DrawingPanel extends Panel implements MouseListener, MouseMotionListener
+public class DrawingPanel extends JPanel implements MouseListener, MouseMotionListener
 {		
 	private static final long serialVersionUID = 1L;
 	private Stack<ArrayList<Point>> stateStack = new Stack<ArrayList<Point>>();
@@ -363,6 +363,8 @@ public class DrawingPanel extends Panel implements MouseListener, MouseMotionLis
 	private Color gridColor = new Color(238, 238, 238);
 
 	public void paint(Graphics g) {
+		//Clears screen, fixes tearing
+		super.paintComponent(g);
 		
 		Graphics2D g2 = (Graphics2D)g;
 		if(grid)
