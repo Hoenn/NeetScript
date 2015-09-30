@@ -1,3 +1,4 @@
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -34,6 +35,7 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
+import javax.swing.JTextField;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
@@ -69,6 +71,7 @@ public class Toolhou extends JFrame {
 	private JFileChooser fileChooser;
 	private JColorChooser colorChooser;
 	private JSlider gridSizeSlider;
+	private JTextField gridSizeTextField;
 	private File currentFile;
 
 
@@ -92,9 +95,9 @@ public class Toolhou extends JFrame {
 		FileFilter filter = new FileNameExtensionFilter("Waypoint file", "way");
 		fileChooser.setFileFilter(filter);
 		
-		gridSizeSlider = new JSlider(1, 100, panel.gridSize);
+		gridSizeSlider = new JSlider(1, 150, panel.gridSize);
 		gridSizeSlider.setMinorTickSpacing(10);
-		gridSizeSlider.setMajorTickSpacing(20);
+		gridSizeSlider.setMajorTickSpacing(50);
 		gridSizeSlider.setPaintTicks(true);
 		gridSizeSlider.addChangeListener(new ChangeListener()
 		{
@@ -103,9 +106,14 @@ public class Toolhou extends JFrame {
 		        //This Line will keep grid from changing until slider is released
 		        //if (!source.getValueIsAdjusting()) {
 		            panel.gridSize = (int)source.getValue();
+		            gridSizeTextField.setText(panel.gridSize+" px");
 		            panel.repaint();      
 		    }
 		});
+		gridSizeTextField = new JTextField();
+		gridSizeTextField.setText(panel.gridSize+" px");
+		gridSizeTextField.setEditable(false);
+		gridSizeTextField.setHorizontalAlignment(JTextField.CENTER);
 	}
 
 	public static void main(String args[]) 
@@ -206,8 +214,9 @@ public class Toolhou extends JFrame {
 	{
 		
 		JDialog d = new JDialog(new JFrame(),"Grid Size");
-		d.setBounds(0, 0, 200, 100);
-		d.add(gridSizeSlider);
+		d.setBounds(0, 0, 300, 100);
+		d.add(gridSizeSlider, BorderLayout.NORTH);
+		d.add(gridSizeTextField, BorderLayout.SOUTH);
 		d.setVisible(true);
 		panel.gridSize=gridSizeSlider.getValue();
 	}
