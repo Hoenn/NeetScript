@@ -218,7 +218,6 @@ public class Toolhou extends JFrame {
 		d.add(gridSizeSlider, BorderLayout.NORTH);
 		d.add(gridSizeTextField, BorderLayout.SOUTH);
 		d.setVisible(true);
-		panel.gridSize=gridSizeSlider.getValue();
 	}
 	private int handleWindowResize(ActionEvent e)
 	{
