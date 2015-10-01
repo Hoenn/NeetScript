@@ -17,6 +17,7 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Line2D;
+import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -28,6 +29,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Stack;
 
+import javax.imageio.ImageIO;
 import javax.swing.JColorChooser;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -36,6 +38,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
+import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
@@ -47,6 +50,7 @@ public class Toolhou extends JFrame {
 	// constants for menu shortcuts
 	private static final int kControlG = 71;
 	private static final int kControlO = 79;
+	private static final int kControlR = 82;
 	private static final int kControlS = 83;
 	private static final int kControlY = 89;
 	private static final int kControlZ = 90;
@@ -68,14 +72,25 @@ public class Toolhou extends JFrame {
 	
 	private DrawingPanel panel;
 	private Toolhou mainWindow;
+	
 	private JFileChooser fileChooser;
+	private File currentFile;
+
+	
 	private JColorChooser colorChooser;
 	private JSlider gridSizeSlider;
 	private JTextField gridSizeTextField;
-	private File currentFile;
+	private JDialog gridSizeDialog;
+	
+	private JSlider recordToleranceSlider;
+	private JTextField recordToleranceTextField;
+	private JDialog recordTolerance;
+	
+	
+	//private final String defAniIconPath="ReimuHead.png";
 
 
-	public Toolhou() 
+	public Toolhou()
 	{
 		super("NeetScript");
 		addMenu();
@@ -87,6 +102,7 @@ public class Toolhou extends JFrame {
 		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		mainWindow=this;
 		
+	
 		colorChooser= new JColorChooser();
 		colorChooser.setPreviewPanel(new JPanel());
 		colorChooser.setColor(panel.gridColor);
@@ -114,9 +130,42 @@ public class Toolhou extends JFrame {
 		gridSizeTextField.setText(panel.gridSize+" px");
 		gridSizeTextField.setEditable(false);
 		gridSizeTextField.setHorizontalAlignment(JTextField.CENTER);
+		
+		gridSizeDialog =  new JDialog(new JFrame(),"Grid Size");
+		gridSizeDialog.setBounds(0, 0, 300, 100);
+		gridSizeDialog.add(gridSizeSlider, BorderLayout.NORTH);
+		gridSizeDialog.add(gridSizeTextField, BorderLayout.SOUTH);
+		
+		
+		recordToleranceSlider = new JSlider(1, 150, panel.recordTolerance);
+		recordToleranceSlider.setMinorTickSpacing(10);
+		recordToleranceSlider.setMajorTickSpacing(50);
+		recordToleranceSlider.setPaintTicks(true);
+		recordToleranceSlider.addChangeListener(new ChangeListener()
+		{
+			public void stateChanged(ChangeEvent e) {
+		        JSlider source = (JSlider)e.getSource();
+		        //This Line will keep grid from changing until slider is released
+		        //if (!source.getValueIsAdjusting()) {
+		            panel.recordTolerance = (int)source.getValue();
+		            recordToleranceTextField.setText(panel.recordTolerance+" px");
+		            panel.repaint();      
+		    }
+		});
+		recordToleranceTextField = new JTextField();
+		recordToleranceTextField.setText(panel.recordTolerance+" px");
+		recordToleranceTextField.setEditable(false);
+		recordToleranceTextField.setHorizontalAlignment(JTextField.CENTER);
+		
+		recordTolerance = new JDialog(new JFrame(),"Record Tolerance");
+		recordTolerance.add(recordToleranceSlider, BorderLayout.NORTH);
+		recordTolerance.add(recordToleranceTextField, BorderLayout.SOUTH);
+		recordTolerance.setAlwaysOnTop(true);
+
+		
 	}
 
-	public static void main(String args[]) 
+	public static void main(String args[])
 	{
 		new Toolhou();
 	}
@@ -127,7 +176,7 @@ public class Toolhou extends JFrame {
 		MenuBar menuBar = new MenuBar();
 		Menu file = new Menu("File");
 		Menu edit = new Menu("Edit");
-		Menu graph = new Menu("Graph");
+		Menu graph = new Menu("Grid");
 		Menu window = new Menu("Window");
 		// now add menu items to these Menu objects
 		file.add(new MenuItem("Open", new MenuShortcut(kControlO))).addActionListener(new WindowHandler());
@@ -138,6 +187,7 @@ public class Toolhou extends JFrame {
 		
 		edit.add(new MenuItem("Undo", new MenuShortcut(kControlZ))).addActionListener(new WindowHandler());
 		edit.add(new MenuItem("Redo", new MenuShortcut(kControlY))).addActionListener(new WindowHandler());
+		edit.add(new MenuItem("Toggle Record", new MenuShortcut(kControlR))).addActionListener(new WindowHandler());
 		
 		graph.add(new MenuItem("Toggle Grid", new MenuShortcut(kControlG))).addActionListener(new WindowHandler());
 		graph.add(new MenuItem("Grid Color")).addActionListener(new WindowHandler());
@@ -199,6 +249,22 @@ public class Toolhou extends JFrame {
 			panel.repaint();
 		}
 	}
+	private void record()
+	{
+		
+		if(panel.recording)
+		{
+			panel.recording=false;
+			recordTolerance.setVisible(false);
+		}
+		else
+		{
+			recordTolerance.setBounds(mainWindow.getWidth()/2-150, 0, 300, 100);
+			recordTolerance.setVisible(true);
+			panel.recording=true;
+		}
+		repaint();
+	}
 	private void toggleGrid()
 	{
 		panel.grid=!panel.grid;
@@ -215,12 +281,8 @@ public class Toolhou extends JFrame {
 	}
 	private void changeGridSize()
 	{
-		
-		JDialog d = new JDialog(new JFrame(),"Grid Size");
-		d.setBounds(0, 0, 300, 100);
-		d.add(gridSizeSlider, BorderLayout.NORTH);
-		d.add(gridSizeTextField, BorderLayout.SOUTH);
-		d.setVisible(true);
+
+		gridSizeDialog.setVisible(true);
 	}
 	private int handleWindowResize(ActionEvent e)
 	{
@@ -376,7 +438,9 @@ public class Toolhou extends JFrame {
 				undo();
 			} else if (e.getActionCommand().equalsIgnoreCase("Redo")) {
 				redo();
-			} else if (e.getActionCommand().equalsIgnoreCase("Toggle Grid")) {
+			} else if(e.getActionCommand().equalsIgnoreCase("Toggle Record")) {
+				record();
+			}  else if (e.getActionCommand().equalsIgnoreCase("Toggle Grid")) {
 				toggleGrid();
 			} else if(e.getActionCommand().equalsIgnoreCase("Grid Color")){
 				changeGridColor();
@@ -413,6 +477,9 @@ public class Toolhou extends JFrame {
 		private boolean grid = true;
 		private int gridSize = 10;
 		private Color gridColor = new Color(238, 238, 238);
+		
+		private boolean recording=false;
+		private int recordTolerance = 30;
 	
 		public void paint(Graphics g) 
 		{
@@ -426,7 +493,12 @@ public class Toolhou extends JFrame {
 			if(dragging)
 				g.setColor(Color.red);
 			else
-				g.setColor(Color.blue);
+			{
+				if(recording)
+					g.setColor(Color.orange);
+				else
+					g.setColor(Color.blue);
+			}
 			
 			for(int i =0; i < list.size(); i++)
 			{	
@@ -444,7 +516,10 @@ public class Toolhou extends JFrame {
 				g.setColor(Color.green);
 				g2.draw(new Line2D.Double(list.get(0), list.get(list.size()-1)));
 			}
+		
+
 		}
+		
 		private void drawGrid(Graphics2D g2)
 		{
 			g2.setColor(gridColor);
@@ -466,11 +541,7 @@ public class Toolhou extends JFrame {
 			//Left Click
 			if(e.getButton() == MouseEvent.BUTTON1 && !dragging)
 			{
-				list.add(e.getPoint());
-				stateStack.push(getShallowList(list));
-	
-				if(redoStateStack.size()>0)
-					redoStateStack.clear();
+				addPoint(e);
 			}
 			
 			repaint();
@@ -495,6 +566,10 @@ public class Toolhou extends JFrame {
 					}
 				}
 			}
+			else if(recording)
+			{
+				mouseClicked(e);
+			}
 		}
 	
 		public void mouseReleased(MouseEvent e) 
@@ -509,6 +584,7 @@ public class Toolhou extends JFrame {
 				
 				repaint();
 			}
+			
 		}
 	
 		public void mouseDragged(MouseEvent e)
@@ -520,8 +596,29 @@ public class Toolhou extends JFrame {
 				repaint();
 	
 			}
+			if(recording)
+			{
+				int mouseX = e.getX();
+				int mouseY = e.getY();
+				Point lastPoint= list.get(list.size()-1);
+				int a= Math.abs(lastPoint.x-mouseX);
+				int b= Math.abs(lastPoint.y-mouseY);
+				int c = (int) Math.sqrt(Math.pow(a, 2)+Math.pow(b, 2));
+				if(c>=recordTolerance)
+				{
+					addPoint(e);
+					repaint();
+				}
+			}
 		}
-		
+		private void addPoint(MouseEvent e)
+		{
+			list.add(e.getPoint());
+			stateStack.push(getShallowList(list));
+
+			if(redoStateStack.size()>0)
+				redoStateStack.clear();
+		}
 		@SuppressWarnings("unchecked")
 		public ArrayList<Point> getShallowList(ArrayList<Point> l)
 		{
