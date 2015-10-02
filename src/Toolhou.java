@@ -75,7 +75,6 @@ public class Toolhou extends JFrame {
 	
 	private JFileChooser fileChooser;
 	private File currentFile;
-
 	
 	private JColorChooser colorChooser;
 	private JSlider gridSizeSlider;
@@ -86,9 +85,7 @@ public class Toolhou extends JFrame {
 	private JTextField recordToleranceTextField;
 	private JDialog recordTolerance;
 	
-	
 	//private final String defAniIconPath="ReimuHead.png";
-
 
 	public Toolhou()
 	{
@@ -102,7 +99,6 @@ public class Toolhou extends JFrame {
 		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		mainWindow=this;
 		
-	
 		colorChooser= new JColorChooser();
 		colorChooser.setPreviewPanel(new JPanel());
 		colorChooser.setColor(panel.gridColor);
@@ -160,9 +156,7 @@ public class Toolhou extends JFrame {
 		recordTolerance = new JDialog(new JFrame(),"Record Tolerance");
 		recordTolerance.add(recordToleranceSlider, BorderLayout.NORTH);
 		recordTolerance.add(recordToleranceTextField, BorderLayout.SOUTH);
-		recordTolerance.setAlwaysOnTop(true);
-
-		
+		recordTolerance.setAlwaysOnTop(true);	
 	}
 
 	public static void main(String args[])
@@ -455,7 +449,7 @@ public class Toolhou extends JFrame {
 				menu.getItem(resPos).setEnabled(false);
 			}
 			else if (e.getActionCommand().equalsIgnoreCase("About")) {
-				JOptionPane.showMessageDialog(null, "A tool for making touhou scripts", "Info",
+				JOptionPane.showMessageDialog(null, "A tool for making simple way-point scripts", "Info",
 						JOptionPane.PLAIN_MESSAGE);
 			}
 		}
