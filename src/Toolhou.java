@@ -153,7 +153,7 @@ public class Toolhou extends JFrame {
 		recordToleranceTextField.setEditable(false);
 		recordToleranceTextField.setHorizontalAlignment(JTextField.CENTER);
 		
-		recordTolerance = new JDialog(new JFrame(),"Record Tolerance");
+		recordTolerance = new JDialog(new JFrame(),"Recording Drag Tolerance");
 		recordTolerance.add(recordToleranceSlider, BorderLayout.NORTH);
 		recordTolerance.add(recordToleranceTextField, BorderLayout.SOUTH);
 		recordTolerance.setAlwaysOnTop(true);	
@@ -170,7 +170,7 @@ public class Toolhou extends JFrame {
 		MenuBar menuBar = new MenuBar();
 		Menu file = new Menu("File");
 		Menu edit = new Menu("Edit");
-		Menu graph = new Menu("Grid");
+		Menu grid = new Menu("Grid");
 		Menu window = new Menu("Window");
 		// now add menu items to these Menu objects
 		file.add(new MenuItem("Open", new MenuShortcut(kControlO))).addActionListener(new WindowHandler());
@@ -183,9 +183,10 @@ public class Toolhou extends JFrame {
 		edit.add(new MenuItem("Redo", new MenuShortcut(kControlY))).addActionListener(new WindowHandler());
 		edit.add(new MenuItem("Toggle Record", new MenuShortcut(kControlR))).addActionListener(new WindowHandler());
 		
-		graph.add(new MenuItem("Toggle Grid", new MenuShortcut(kControlG))).addActionListener(new WindowHandler());
-		graph.add(new MenuItem("Grid Color")).addActionListener(new WindowHandler());
-		graph.add(new MenuItem("Grid Size")).addActionListener(new WindowHandler());
+		grid.add(new MenuItem("Toggle Grid", new MenuShortcut(kControlG))).addActionListener(new WindowHandler());
+		grid.add(new MenuItem("Grid Color")).addActionListener(new WindowHandler());
+		grid.add(new MenuItem("Grid Size")).addActionListener(new WindowHandler());
+		
 		for(int i=0; i<resolutions.length; i++)
 		{
 			window.add(new MenuItem(resolutions[i])).addActionListener(new WindowHandler());
@@ -196,7 +197,7 @@ public class Toolhou extends JFrame {
 		// add menus to menubar
 		menuBar.add(file);
 		menuBar.add(edit);
-		menuBar.add(graph);
+		menuBar.add(grid);
 		menuBar.add(window);
 		if (null == this.getMenuBar()) {
 			this.setMenuBar(menuBar);
@@ -275,7 +276,6 @@ public class Toolhou extends JFrame {
 	}
 	private void changeGridSize()
 	{
-
 		gridSizeDialog.setVisible(true);
 	}
 	private int handleWindowResize(ActionEvent e)
@@ -406,7 +406,6 @@ public class Toolhou extends JFrame {
 			}
 			else if(e.getActionCommand().equalsIgnoreCase("Save"))
 			{
-			
 				if(currentFile!=null)
 					saveAs(currentFile);
 				else
@@ -604,6 +603,7 @@ public class Toolhou extends JFrame {
 					repaint();
 				}
 			}
+
 		}
 		private void addPoint(MouseEvent e)
 		{
