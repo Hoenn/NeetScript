@@ -512,8 +512,6 @@ public class Toolhou extends JFrame {
 				g.setColor(Color.green);
 				g2.draw(new Line2D.Double(list.get(0), list.get(list.size()-1)));
 			}
-		
-
 		}
 		
 		private void drawGrid(Graphics2D g2)
@@ -559,10 +557,6 @@ public class Toolhou extends JFrame {
 					}
 				}
 			}
-			//else if(recording)
-			//{
-			//	mouseClicked(e);
-			//}
 		}
 	
 		public void mouseReleased(MouseEvent e) 
