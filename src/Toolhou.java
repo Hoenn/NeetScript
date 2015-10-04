@@ -98,67 +98,9 @@ public class Toolhou extends JFrame {
 		this.setResizable(false);
 		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		mainWindow=this;
-		
-		colorChooser= new JColorChooser();
-		colorChooser.setPreviewPanel(new JPanel());
-		colorChooser.setColor(panel.gridColor);
-		
-		fileChooser = new JFileChooser();
-		FileFilter filter = new FileNameExtensionFilter("Waypoint file", "way");
-		fileChooser.setFileFilter(filter);
-		
-		gridSizeSlider = new JSlider(1, 150, panel.gridSize);
-		gridSizeSlider.setMinorTickSpacing(10);
-		gridSizeSlider.setMajorTickSpacing(50);
-		gridSizeSlider.setPaintTicks(true);
-		gridSizeSlider.addChangeListener(new ChangeListener()
-		{
-			public void stateChanged(ChangeEvent e) {
-		        JSlider source = (JSlider)e.getSource();
-		        //This Line will keep grid from changing until slider is released
-		        //if (!source.getValueIsAdjusting()) {
-		            panel.gridSize = (int)source.getValue();
-		            gridSizeTextField.setText(panel.gridSize+" px");
-		            panel.repaint();      
-		    }
-		});
-		gridSizeTextField = new JTextField();
-		gridSizeTextField.setText(panel.gridSize+" px");
-		gridSizeTextField.setEditable(false);
-		gridSizeTextField.setHorizontalAlignment(JTextField.CENTER);
-		
-		gridSizeDialog =  new JDialog(new JFrame(),"Grid Size");
-		gridSizeDialog.setBounds(0, 0, 300, 100);
-		gridSizeDialog.add(gridSizeSlider, BorderLayout.NORTH);
-		gridSizeDialog.add(gridSizeTextField, BorderLayout.SOUTH);
-		
-		
-		recordToleranceSlider = new JSlider(1, 150, panel.recordTolerance);
-		recordToleranceSlider.setMinorTickSpacing(10);
-		recordToleranceSlider.setMajorTickSpacing(50);
-		recordToleranceSlider.setPaintTicks(true);
-		recordToleranceSlider.addChangeListener(new ChangeListener()
-		{
-			public void stateChanged(ChangeEvent e) {
-		        JSlider source = (JSlider)e.getSource();
-		        //This Line will keep grid from changing until slider is released
-		        //if (!source.getValueIsAdjusting()) {
-		            panel.recordTolerance = (int)source.getValue();
-		            recordToleranceTextField.setText(panel.recordTolerance+" px");
-		            panel.repaint();      
-		    }
-		});
-		recordToleranceTextField = new JTextField();
-		recordToleranceTextField.setText(panel.recordTolerance+" px");
-		recordToleranceTextField.setEditable(false);
-		recordToleranceTextField.setHorizontalAlignment(JTextField.CENTER);
-		
-		recordTolerance = new JDialog(new JFrame(),"Recording Drag Tolerance");
-		recordTolerance.add(recordToleranceSlider, BorderLayout.NORTH);
-		recordTolerance.add(recordToleranceTextField, BorderLayout.SOUTH);
-		recordTolerance.setAlwaysOnTop(true);	
+		addDialogs();
 	}
-
+		
 	public static void main(String args[])
 	{
 		new Toolhou();
@@ -221,6 +163,67 @@ public class Toolhou extends JFrame {
 		panel.addMouseListener(panel);
 		panel.addMouseMotionListener(panel);
 		this.add(panel);
+	}
+	private void addDialogs()
+	{
+		colorChooser= new JColorChooser();
+		colorChooser.setPreviewPanel(new JPanel());
+		colorChooser.setColor(panel.gridColor);
+		
+		fileChooser = new JFileChooser();
+		FileFilter filter = new FileNameExtensionFilter("Waypoint file", "way");
+		fileChooser.setFileFilter(filter);
+		
+		gridSizeSlider = new JSlider(1, 150, panel.gridSize);
+		gridSizeSlider.setMinorTickSpacing(10);
+		gridSizeSlider.setMajorTickSpacing(50);
+		gridSizeSlider.setPaintTicks(true);
+		gridSizeSlider.addChangeListener(new ChangeListener()
+		{
+			public void stateChanged(ChangeEvent e) {
+		        JSlider source = (JSlider)e.getSource();
+		        //This Line will keep grid from changing until slider is released
+		        //if (!source.getValueIsAdjusting()) {
+		            panel.gridSize = (int)source.getValue();
+		            gridSizeTextField.setText(panel.gridSize+" px");
+		            panel.repaint();      
+		    }
+		});
+		gridSizeTextField = new JTextField();
+		gridSizeTextField.setText(panel.gridSize+" px");
+		gridSizeTextField.setEditable(false);
+		gridSizeTextField.setHorizontalAlignment(JTextField.CENTER);
+		
+		gridSizeDialog =  new JDialog(new JFrame(),"Grid Size");
+		gridSizeDialog.setBounds(0, 0, 300, 100);
+		gridSizeDialog.add(gridSizeSlider, BorderLayout.NORTH);
+		gridSizeDialog.add(gridSizeTextField, BorderLayout.SOUTH);
+		
+		
+		recordToleranceSlider = new JSlider(1, 150, panel.recordTolerance);
+		recordToleranceSlider.setMinorTickSpacing(10);
+		recordToleranceSlider.setMajorTickSpacing(50);
+		recordToleranceSlider.setPaintTicks(true);
+		recordToleranceSlider.addChangeListener(new ChangeListener()
+		{
+			public void stateChanged(ChangeEvent e) {
+		        JSlider source = (JSlider)e.getSource();
+		        //This Line will keep grid from changing until slider is released
+		        //if (!source.getValueIsAdjusting()) {
+		            panel.recordTolerance = (int)source.getValue();
+		            recordToleranceTextField.setText(panel.recordTolerance+" px");
+		            panel.repaint();      
+		    }
+		});
+		recordToleranceTextField = new JTextField();
+		recordToleranceTextField.setText(panel.recordTolerance+" px");
+		recordToleranceTextField.setEditable(false);
+		recordToleranceTextField.setHorizontalAlignment(JTextField.CENTER);
+		
+		recordTolerance = new JDialog(new JFrame(),"Recording Drag Tolerance");
+		recordTolerance.add(recordToleranceSlider, BorderLayout.NORTH);
+		recordTolerance.add(recordToleranceTextField, BorderLayout.SOUTH);
+		recordTolerance.setAlwaysOnTop(true);	
 	}
 	private void undo()
 	{
@@ -529,19 +532,16 @@ public class Toolhou extends JFrame {
 			}
 	
 		}
-		public void mouseClicked(MouseEvent e) 
+	
+		public void mousePressed(MouseEvent e) 
 		{
 			//Left Click
 			if(e.getButton() == MouseEvent.BUTTON1 && !dragging)
 			{
 				addPoint(e);
+				repaint();
 			}
-			
-			repaint();
-		}
-	
-		public void mousePressed(MouseEvent e) 
-		{
+			//Right Click
 			if(e.getButton() == MouseEvent.BUTTON3)
 			{
 				if(list.size()>0)
@@ -559,10 +559,10 @@ public class Toolhou extends JFrame {
 					}
 				}
 			}
-			else if(recording)
-			{
-				mouseClicked(e);
-			}
+			//else if(recording)
+			//{
+			//	mouseClicked(e);
+			//}
 		}
 	
 		public void mouseReleased(MouseEvent e) 
@@ -624,6 +624,8 @@ public class Toolhou extends JFrame {
 		public void mouseEntered(MouseEvent e) {
 		}
 		public void mouseExited(MouseEvent e) {
+		}
+		public void mouseClicked(MouseEvent e) {	
 		}
 	}	
 }
