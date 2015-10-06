@@ -123,6 +123,7 @@ public class Toolhou extends JFrame {
 		
 		edit.add(new MenuItem("Undo", new MenuShortcut(kControlZ))).addActionListener(new WindowHandler());
 		edit.add(new MenuItem("Redo", new MenuShortcut(kControlY))).addActionListener(new WindowHandler());
+		edit.add(new MenuItem("Clear")).addActionListener(new WindowHandler());
 		edit.add(new MenuItem("Toggle Record", new MenuShortcut(kControlR))).addActionListener(new WindowHandler());
 		
 		grid.add(new MenuItem("Toggle Grid", new MenuShortcut(kControlG))).addActionListener(new WindowHandler());
@@ -246,6 +247,14 @@ public class Toolhou extends JFrame {
 			panel.list = panel.getShallowList(panel.stateStack.peek());
 			panel.repaint();
 		}
+	}
+	private void clear()
+	{
+		
+		panel.redoStateStack.clear();
+		panel.list.clear();
+		panel.stateStack.push(panel.list);
+		panel.repaint();
 	}
 	private void record()
 	{
@@ -434,6 +443,8 @@ public class Toolhou extends JFrame {
 				undo();
 			} else if (e.getActionCommand().equalsIgnoreCase("Redo")) {
 				redo();
+			} else if(e.getActionCommand().equalsIgnoreCase("Clear")) {
+				clear();
 			} else if(e.getActionCommand().equalsIgnoreCase("Toggle Record")) {
 				record();
 			}  else if (e.getActionCommand().equalsIgnoreCase("Toggle Grid")) {
