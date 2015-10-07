@@ -425,6 +425,11 @@ public class Toolhou extends JFrame {
 		}
 		private void newFile()
 		{
+			if(panel.stateStack.isEmpty())
+			{
+				clear();
+				return;
+			}
 			String buttonLabels[] = {"Save", "Don't Save", "Cancel"};
 
 			int choice= JOptionPane.showOptionDialog(null, CLEAR_MESSAGE, "Exit", JOptionPane.DEFAULT_OPTION,
