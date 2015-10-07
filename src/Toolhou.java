@@ -49,6 +49,7 @@ public class Toolhou extends JFrame {
 	private static final long serialVersionUID = 1L;
 	// constants for menu shortcuts
 	private static final int kControlG = 71;
+	private static final int kControlN = 78;
 	private static final int kControlO = 79;
 	private static final int kControlR = 82;
 	private static final int kControlS = 83;
@@ -115,6 +116,7 @@ public class Toolhou extends JFrame {
 		Menu grid = new Menu("Grid");
 		Menu window = new Menu("Window");
 		// now add menu items to these Menu objects
+		file.add(new MenuItem("New", new MenuShortcut(kControlN))).addActionListener(new WindowHandler());
 		file.add(new MenuItem("Open", new MenuShortcut(kControlO))).addActionListener(new WindowHandler());
 		file.add(new MenuItem("Save", new MenuShortcut(kControlS))).addActionListener(new WindowHandler());
 		file.add(new MenuItem("Save as")).addActionListener(new WindowHandler());
@@ -322,6 +324,8 @@ public class Toolhou extends JFrame {
 	private class WindowHandler extends WindowAdapter implements ActionListener {
 		private final String QUIT_MESSAGE= "You may have unsaved work. "+
 				"Save before quit?";
+		private final String CLEAR_MESSAGE = "You may have unsaved work. "+
+				"Save before clear?";
 		
 		public void windowClosing(WindowEvent e) 
 		{
@@ -329,12 +333,20 @@ public class Toolhou extends JFrame {
 		}
 		private void quitWithPrompt()
 		{
+			if(panel.stateStack.size()<=0)
+				System.exit(0);
 			String buttonLabels[] = {"Save", "Don't Save", "Cancel"};
 	        int choice= JOptionPane.showOptionDialog(null, QUIT_MESSAGE, "Exit", JOptionPane.DEFAULT_OPTION,
 	        			JOptionPane.WARNING_MESSAGE, null, buttonLabels, buttonLabels[1]);
+	      
 	        if(choice==0)
 	        {
-				if(fileChooser.showSaveDialog(Toolhou.this) == JFileChooser.APPROVE_OPTION)
+	        	if(currentFile!=null)
+	        	{
+	        		saveAs(currentFile);
+					System.exit(0);
+	        	}
+	        	else if(fileChooser.showSaveDialog(Toolhou.this) == JFileChooser.APPROVE_OPTION)
 				{
 					currentFile = fileChooser.getSelectedFile();
 					saveAs(currentFile);
@@ -383,7 +395,6 @@ public class Toolhou extends JFrame {
 				content = content.substring(end+1);
 			}
 			panel.list = listFromFile;
-			panel.stateStack.push(panel.getShallowList(listFromFile));
 			panel.repaint();
 			
 		}
@@ -403,6 +414,43 @@ public class Toolhou extends JFrame {
 				e.printStackTrace();
 			}
 		}
+		private void save()
+		{
+			if(fileChooser.showSaveDialog(Toolhou.this) == JFileChooser.APPROVE_OPTION)
+			{
+				currentFile = fileChooser.getSelectedFile();
+				saveAs(currentFile);
+			}
+			
+		}
+		private void newFile()
+		{
+			String buttonLabels[] = {"Save", "Don't Save", "Cancel"};
+
+			int choice= JOptionPane.showOptionDialog(null, CLEAR_MESSAGE, "Exit", JOptionPane.DEFAULT_OPTION,
+        			JOptionPane.WARNING_MESSAGE, null, buttonLabels, buttonLabels[1]);
+			if(choice==0)
+			{
+				if(currentFile!=null)
+				{
+					saveAs(currentFile);
+					clear();
+				}
+				
+				else if(fileChooser.showSaveDialog(Toolhou.this) == JFileChooser.APPROVE_OPTION)
+				{
+					currentFile = fileChooser.getSelectedFile();
+					saveAs(currentFile);
+					clear();
+				}	     
+				currentFile=null;
+			}
+	        else if(choice==1)
+	        {
+				clear();
+				currentFile = null;
+	        }
+		}
 		public void actionPerformed(ActionEvent e) 
 		{
 			//Allows access to the name of the Menu form which item was chosen
@@ -421,23 +469,15 @@ public class Toolhou extends JFrame {
 				if(currentFile!=null)
 					saveAs(currentFile);
 				else
-				{
-					if(fileChooser.showSaveDialog(Toolhou.this) == JFileChooser.APPROVE_OPTION)
-					{
-						currentFile = fileChooser.getSelectedFile();
-						saveAs(currentFile);
-					}
-				}			
+					save();		
 			}
 			else if(e.getActionCommand().equalsIgnoreCase("Save as"))
 			{
-				if(fileChooser.showSaveDialog(Toolhou.this) == JFileChooser.APPROVE_OPTION)
-				{
-					currentFile = fileChooser.getSelectedFile();
-					saveAs(currentFile);
-				}
+				save();
 			}
-			else if (e.getActionCommand().equalsIgnoreCase("Exit")) {
+			else if (e.getActionCommand().equalsIgnoreCase("New")) {
+				newFile();
+			} else if (e.getActionCommand().equalsIgnoreCase("Exit")) {
 				quitWithPrompt();
 			} else if (e.getActionCommand().equalsIgnoreCase("Undo")) {
 				undo();
