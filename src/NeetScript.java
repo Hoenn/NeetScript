@@ -44,7 +44,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-public class Toolhou extends JFrame {
+public class NeetScript extends JFrame {
 
 	private static final long serialVersionUID = 1L;
 	// constants for menu shortcuts
@@ -72,7 +72,7 @@ public class Toolhou extends JFrame {
 	};
 	
 	private DrawingPanel panel;
-	private Toolhou mainWindow;
+	private NeetScript mainWindow;
 	
 	private JFileChooser fileChooser;
 	private File currentFile;
@@ -88,7 +88,7 @@ public class Toolhou extends JFrame {
 	
 	//private final String defAniIconPath="ReimuHead.png";
 
-	public Toolhou()
+	public NeetScript()
 	{
 		super("NeetScript");
 		addMenu();
@@ -104,7 +104,7 @@ public class Toolhou extends JFrame {
 		
 	public static void main(String args[])
 	{
-		new Toolhou();
+		new NeetScript();
 	}
 
 	private void addMenu() 
@@ -346,7 +346,7 @@ public class Toolhou extends JFrame {
 	        		saveAs(currentFile);
 					System.exit(0);
 	        	}
-	        	else if(fileChooser.showSaveDialog(Toolhou.this) == JFileChooser.APPROVE_OPTION)
+	        	else if(fileChooser.showSaveDialog(mainWindow) == JFileChooser.APPROVE_OPTION)
 				{
 					currentFile = fileChooser.getSelectedFile();
 					saveAs(currentFile);
@@ -416,7 +416,7 @@ public class Toolhou extends JFrame {
 		}
 		private void save()
 		{
-			if(fileChooser.showSaveDialog(Toolhou.this) == JFileChooser.APPROVE_OPTION)
+			if(fileChooser.showSaveDialog(mainWindow) == JFileChooser.APPROVE_OPTION)
 			{
 				currentFile = fileChooser.getSelectedFile();
 				saveAs(currentFile);
@@ -442,7 +442,7 @@ public class Toolhou extends JFrame {
 					clear();
 				}
 				
-				else if(fileChooser.showSaveDialog(Toolhou.this) == JFileChooser.APPROVE_OPTION)
+				else if(fileChooser.showSaveDialog(mainWindow) == JFileChooser.APPROVE_OPTION)
 				{
 					currentFile = fileChooser.getSelectedFile();
 					saveAs(currentFile);
@@ -462,7 +462,7 @@ public class Toolhou extends JFrame {
 			Menu menu = (Menu)((MenuItem)e.getSource()).getParent();
 			if(e.getActionCommand().equalsIgnoreCase("Open"))
 			{
-				int returnVal = fileChooser.showOpenDialog(Toolhou.this);
+				int returnVal = fileChooser.showOpenDialog(mainWindow);
 				if(returnVal == JFileChooser.APPROVE_OPTION)
 				{
 					currentFile = fileChooser.getSelectedFile();
@@ -503,7 +503,7 @@ public class Toolhou extends JFrame {
 			{
 				int resPos= handleWindowResize(e);
 				//Clears Window Menu 
-				clearMenuSelection(2);
+				clearMenuSelection(3);
 				menu.getItem(resPos).setEnabled(false);
 			}
 			else if (e.getActionCommand().equalsIgnoreCase("About")) {
