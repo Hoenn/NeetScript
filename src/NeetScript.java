@@ -229,12 +229,12 @@ public class NeetScript extends JFrame {
 	}
 	private void undo()
 	{
-		if(!panel.dragging&&panel.stateStack.size()>0)
+		if(!panel.dragging&&panel.undoStateStack.size()>0)
 		{
 
-			panel.redoStateStack.push(panel.stateStack.pop());
-			if(!panel.stateStack.isEmpty())
-				panel.list = panel.getShallowList(panel.stateStack.peek());
+			panel.redoStateStack.push(panel.undoStateStack.pop());
+			if(!panel.undoStateStack.isEmpty())
+				panel.list = panel.getShallowList(panel.undoStateStack.peek());
 			else
 				panel.list.clear();
 			panel.repaint();
@@ -244,8 +244,8 @@ public class NeetScript extends JFrame {
 	{
 		if(!panel.dragging&&panel.redoStateStack.size()>0)
 		{
-			panel.stateStack.push(panel.redoStateStack.pop());
-			panel.list = panel.getShallowList(panel.stateStack.peek());
+			panel.undoStateStack.push(panel.redoStateStack.pop());
+			panel.list = panel.getShallowList(panel.undoStateStack.peek());
 			panel.repaint();
 		}
 	}
@@ -254,7 +254,7 @@ public class NeetScript extends JFrame {
 		
 		panel.redoStateStack.clear();
 		panel.list.clear();
-		panel.stateStack.push(panel.list);
+		panel.undoStateStack.push(panel.list);
 		panel.repaint();
 	}
 	private void record()
@@ -312,13 +312,13 @@ public class NeetScript extends JFrame {
 	}	
 	private String getPointListFormatted()
 	{
-		String formatted="";
+		StringBuilder formatted= new StringBuilder();
 		for(Point p: panel.list)
 		{
-			formatted+="["+p.x+","+p.y+"]";
+			formatted.append("["+p.x+","+p.y+"]");
 		}
 		
-		return formatted;
+		return formatted.toString();
 	}
 	private class WindowHandler extends WindowAdapter implements ActionListener {
 		private final String QUIT_MESSAGE= "You may have unsaved work. "+
@@ -332,7 +332,7 @@ public class NeetScript extends JFrame {
 		}
 		private void quitWithPrompt()
 		{
-			if(panel.stateStack.size()<=0)
+			if(panel.undoStateStack.size()<=0)
 				System.exit(0);
 			String buttonLabels[] = {"Save", "Don't Save", "Cancel"};
 	        int choice= JOptionPane.showOptionDialog(null, QUIT_MESSAGE, "Exit", JOptionPane.DEFAULT_OPTION,
@@ -367,10 +367,11 @@ public class NeetScript extends JFrame {
 		}
 		private void openFile(File f)
 		{
-			panel.stateStack.clear();
+			panel.undoStateStack.clear();
 			panel.redoStateStack.clear();
 			ArrayList<Point> listFromFile = new ArrayList<Point>();
 			
+			//Adds correct file suffix if not present
 			String path = f.getAbsolutePath();
 			if(!path.contains(".way"))
 				path+=".way";
@@ -400,6 +401,7 @@ public class NeetScript extends JFrame {
 		private void saveAs(File f)
 		{
 			String path = f.getAbsolutePath();
+			//Adds correct file suffix if not present
 			if(!path.contains(".way"))
 				path+=".way";
 			
@@ -424,7 +426,7 @@ public class NeetScript extends JFrame {
 		}
 		private void newFile()
 		{
-			if(panel.stateStack.isEmpty())
+			if(panel.undoStateStack.isEmpty())
 			{
 				clear();
 				return;
@@ -517,7 +519,7 @@ public class NeetScript extends JFrame {
 		private static final long serialVersionUID = 1L;
 		
 		public ArrayList<Point> list = new ArrayList<Point>();
-		private Stack<ArrayList<Point>> stateStack = new Stack<ArrayList<Point>>();
+		private Stack<ArrayList<Point>> undoStateStack = new Stack<ArrayList<Point>>();
 		private Stack<ArrayList<Point>> redoStateStack = new Stack<ArrayList<Point>>();
 		
 		private boolean dragging = false; 
@@ -532,11 +534,13 @@ public class NeetScript extends JFrame {
 		private boolean recording=false;
 		private int recordTolerance = 30;
 	
+		@Override
 		public void paint(Graphics g) 
 		{
 			//Clears screen, fixes tearing
 			super.paintComponent(g);
 			
+			//Used for drawing lines
 			Graphics2D g2 = (Graphics2D)g;
 			if(grid)
 				drawGrid(g2);
@@ -547,14 +551,17 @@ public class NeetScript extends JFrame {
 			{
 				if(recording)
 					g.setColor(Color.orange);
+				//Default Color
 				else
 					g.setColor(Color.blue);
 			}
-			
+			//Draw points
 			for(int i =0; i < list.size(); i++)
 			{	
 				Point currPoint = list.get(i);
+				//Draw Rectangles at each point
 				g.drawRect(currPoint.x-pointMarkerSize/2, currPoint.y-pointMarkerSize/2, pointMarkerSize, pointMarkerSize);
+				//Connect points
 				if(i>0)
 				{
 					Point prevPoint = list.get(i-1);
@@ -620,7 +627,7 @@ public class NeetScript extends JFrame {
 			{
 				dragging=false;
 				dragged=null;
-				stateStack.push(getShallowList(list));
+				undoStateStack.push(getShallowList(list));
 				if(redoStateStack.size()>0)
 					redoStateStack.clear();
 				
@@ -657,7 +664,7 @@ public class NeetScript extends JFrame {
 		private void addPoint(MouseEvent e)
 		{
 			list.add(e.getPoint());
-			stateStack.push(getShallowList(list));
+			undoStateStack.push(getShallowList(list));
 
 			if(redoStateStack.size()>0)
 				redoStateStack.clear();
