@@ -86,7 +86,6 @@ public class NeetScript extends JFrame {
 	private JTextField recordToleranceTextField;
 	private JDialog recordTolerance;
 	
-	//private final String defAniIconPath="ReimuHead.png";
 
 	public NeetScript()
 	{
