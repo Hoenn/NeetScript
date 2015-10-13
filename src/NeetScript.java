@@ -72,7 +72,7 @@ public class NeetScript extends JFrame {
 	};
 	
 	private DrawingPanel panel;
-	private NeetScript mainWindow;
+	private NeetScript window;
 	
 	private JFileChooser fileChooser;
 	private File currentFile;
@@ -97,7 +97,7 @@ public class NeetScript extends JFrame {
 		this.setVisible(true);
 		this.setResizable(false);
 		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
-		mainWindow=this;
+		window=this;
 		addDialogs();
 	}
 		
@@ -267,7 +267,7 @@ public class NeetScript extends JFrame {
 		}
 		else
 		{
-			recordTolerance.setBounds(mainWindow.getWidth()/2-150, 0, 300, 100);
+			recordTolerance.setBounds(window.getWidth()/2-150, 0, 300, 100);
 			recordTolerance.setVisible(true);
 			panel.recording=true;
 		}
@@ -306,7 +306,7 @@ public class NeetScript extends JFrame {
 			
 		int width = Integer.parseInt(targetSize.substring(targetSize.indexOf("-")+1, targetSize.indexOf("x")).trim());
 		int height = Integer.parseInt(targetSize.substring(targetSize.indexOf("x")+1).trim());
-		mainWindow.setSize(width, height);
+		window.setSize(width, height);
 		
 		return resPos;
 	}	
@@ -345,7 +345,7 @@ public class NeetScript extends JFrame {
 	        		saveAs(currentFile);
 					System.exit(0);
 	        	}
-	        	else if(fileChooser.showSaveDialog(mainWindow) == JFileChooser.APPROVE_OPTION)
+	        	else if(fileChooser.showSaveDialog(window) == JFileChooser.APPROVE_OPTION)
 				{
 					currentFile = fileChooser.getSelectedFile();
 					saveAs(currentFile);
@@ -417,7 +417,7 @@ public class NeetScript extends JFrame {
 		}
 		private void save()
 		{
-			if(fileChooser.showSaveDialog(mainWindow) == JFileChooser.APPROVE_OPTION)
+			if(fileChooser.showSaveDialog(window) == JFileChooser.APPROVE_OPTION)
 			{
 				currentFile = fileChooser.getSelectedFile();
 				saveAs(currentFile);
@@ -443,7 +443,7 @@ public class NeetScript extends JFrame {
 					clear();
 				}
 				
-				else if(fileChooser.showSaveDialog(mainWindow) == JFileChooser.APPROVE_OPTION)
+				else if(fileChooser.showSaveDialog(window) == JFileChooser.APPROVE_OPTION)
 				{
 					currentFile = fileChooser.getSelectedFile();
 					saveAs(currentFile);
@@ -463,7 +463,7 @@ public class NeetScript extends JFrame {
 			Menu menu = (Menu)((MenuItem)e.getSource()).getParent();
 			if(e.getActionCommand().equalsIgnoreCase("Open"))
 			{
-				int returnVal = fileChooser.showOpenDialog(mainWindow);
+				int returnVal = fileChooser.showOpenDialog(window);
 				if(returnVal == JFileChooser.APPROVE_OPTION)
 				{
 					currentFile = fileChooser.getSelectedFile();
@@ -579,8 +579,8 @@ public class NeetScript extends JFrame {
 		private void drawGrid(Graphics2D g2)
 		{
 			g2.setColor(gridColor);
-			int w = mainWindow.getWidth();
-			int h = mainWindow.getHeight();
+			int w = window.getWidth();
+			int h = window.getHeight();
 			for(int i=0; i<h; i+=gridSize)
 			{
 				g2.draw(new Line2D.Double(0, i, w, i));
