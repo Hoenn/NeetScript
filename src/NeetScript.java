@@ -17,7 +17,6 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.geom.Line2D;
-import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -29,7 +28,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Stack;
 
-import javax.imageio.ImageIO;
 import javax.swing.JColorChooser;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -38,7 +36,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
-import javax.swing.Timer;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
@@ -96,6 +93,7 @@ public class NeetScript extends JFrame {
 		this.setSize(640, 480);
 		this.setVisible(true);
 		this.setResizable(false);
+		//For a save before close prompt
 		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		window=this;
 		addDialogs();
@@ -184,11 +182,9 @@ public class NeetScript extends JFrame {
 		{
 			public void stateChanged(ChangeEvent e) {
 		        JSlider source = (JSlider)e.getSource();
-		        //This Line will keep grid from changing until slider is released
-		        //if (!source.getValueIsAdjusting()) {
-		            panel.gridSize = (int)source.getValue();
-		            gridSizeTextField.setText(panel.gridSize+" px");
-		            panel.repaint();      
+	            panel.gridSize = (int)source.getValue();
+	            gridSizeTextField.setText(panel.gridSize+" px");
+	            panel.repaint();      
 		    }
 		});
 		gridSizeTextField = new JTextField();
@@ -209,12 +205,10 @@ public class NeetScript extends JFrame {
 		recordToleranceSlider.addChangeListener(new ChangeListener()
 		{
 			public void stateChanged(ChangeEvent e) {
-		        JSlider source = (JSlider)e.getSource();
-		        //This Line will keep grid from changing until slider is released
-		        //if (!source.getValueIsAdjusting()) {
-		            panel.recordTolerance = (int)source.getValue();
-		            recordToleranceTextField.setText(panel.recordTolerance+" px");
-		            panel.repaint();      
+		        JSlider source = (JSlider)e.getSource();	        
+	            panel.recordTolerance = (int)source.getValue();
+	            recordToleranceTextField.setText(panel.recordTolerance+" px");
+	            panel.repaint();      
 		    }
 		});
 		recordToleranceTextField = new JTextField();
