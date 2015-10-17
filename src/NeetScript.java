@@ -1,6 +1,7 @@
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
@@ -32,6 +33,7 @@ import javax.swing.JColorChooser;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
@@ -83,6 +85,9 @@ public class NeetScript extends JFrame {
 	private JTextField recordToleranceTextField;
 	private JDialog recordTolerance;
 	
+	private boolean yAxisFlip=false;
+	private final int yFlipPos = 4;
+	
 
 	public NeetScript()
 	{
@@ -124,6 +129,7 @@ public class NeetScript extends JFrame {
 		edit.add(new MenuItem("Redo", new MenuShortcut(kControlY))).addActionListener(new WindowHandler());
 		edit.add(new MenuItem("Clear")).addActionListener(new WindowHandler());
 		edit.add(new MenuItem("Toggle Record", new MenuShortcut(kControlR))).addActionListener(new WindowHandler());
+		edit.add(new MenuItem("Toggle Y-Axis Flip")).addActionListener(new WindowHandler());
 		
 		grid.add(new MenuItem("Toggle Grid", new MenuShortcut(kControlG))).addActionListener(new WindowHandler());
 		grid.add(new MenuItem("Grid Color")).addActionListener(new WindowHandler());
@@ -307,9 +313,13 @@ public class NeetScript extends JFrame {
 	private String getPointListFormatted()
 	{
 		StringBuilder formatted= new StringBuilder();
+		int height = this.getHeight();
 		for(Point p: panel.list)
 		{
-			formatted.append("["+p.x+","+p.y+"]");
+			if(yAxisFlip)
+				formatted.append("["+p.x+","+(height-p.y)+"]");
+			else
+				formatted.append("["+p.x+","+p.y+"]");
 		}
 		
 		return formatted.toString();
@@ -487,6 +497,19 @@ public class NeetScript extends JFrame {
 				clear();
 			} else if(e.getActionCommand().equalsIgnoreCase("Toggle Record")) {
 				record();
+			} else if(e.getActionCommand().equalsIgnoreCase("Toggle Y-Axis Flip")) {
+				MenuItem m = menu.getItem(yFlipPos);
+				if(yAxisFlip)
+				{
+					m.setFont(new Font("Verdana", Font.PLAIN, 12));
+					yAxisFlip=false;
+				}
+				else
+				{
+					m.setFont(new Font("Verdana", Font.BOLD, 12));
+					yAxisFlip=true;
+				}
+				
 			}  else if (e.getActionCommand().equalsIgnoreCase("Toggle Grid")) {
 				toggleGrid();
 			} else if(e.getActionCommand().equalsIgnoreCase("Grid Color")){
