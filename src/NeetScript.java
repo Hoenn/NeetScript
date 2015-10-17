@@ -72,6 +72,7 @@ public class NeetScript extends JFrame {
 	
 	private DrawingPanel panel;
 	private NeetScript window;
+	private final String windowTitle = "NeetScript";
 	
 	private JFileChooser fileChooser;
 	private File currentFile;
@@ -501,11 +502,13 @@ public class NeetScript extends JFrame {
 				MenuItem m = menu.getItem(yFlipPos);
 				if(yAxisFlip)
 				{
+					window.setTitle(windowTitle);
 					m.setFont(new Font("Verdana", Font.PLAIN, 12));
 					yAxisFlip=false;
 				}
 				else
 				{
+					window.setTitle(windowTitle+" *Y-FLIPPED");
 					m.setFont(new Font("Verdana", Font.BOLD, 12));
 					yAxisFlip=true;
 				}
