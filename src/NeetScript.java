@@ -33,7 +33,6 @@ import javax.swing.JColorChooser;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
-import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
@@ -87,7 +86,6 @@ public class NeetScript extends JFrame {
 	private JDialog recordTolerance;
 	
 	private boolean yAxisFlip=false;
-	private final int yFlipPos = 4;
 	
 
 	public NeetScript()
@@ -274,9 +272,29 @@ public class NeetScript extends JFrame {
 		}
 		repaint();
 	}
-	private void toggleGrid()
+	private void toggleYAxisFlip(MenuItem m)
+	{
+		if(yAxisFlip)
+		{
+			window.setTitle(windowTitle);
+			m.setFont(new Font("Verdana", Font.PLAIN, 12));
+			yAxisFlip=false;
+		}
+		else
+		{
+			window.setTitle(windowTitle+" *Y-FLIPPED");
+			m.setFont(new Font("Verdana", Font.ITALIC, 12));
+			yAxisFlip=true;
+		}
+	}
+	private void toggleGrid(MenuItem m)
 	{
 		panel.grid=!panel.grid;
+		if(panel.grid)
+			m.setFont(new Font("Verdana", Font.ITALIC, 12));
+		else
+			m.setFont(new Font("Verdana", Font.PLAIN, 12));
+		
 		panel.repaint();
 	}
 	private void changeGridColor()
@@ -499,22 +517,9 @@ public class NeetScript extends JFrame {
 			} else if(e.getActionCommand().equalsIgnoreCase("Toggle Record")) {
 				record();
 			} else if(e.getActionCommand().equalsIgnoreCase("Toggle Y-Axis Flip")) {
-				MenuItem m = menu.getItem(yFlipPos);
-				if(yAxisFlip)
-				{
-					window.setTitle(windowTitle);
-					m.setFont(new Font("Verdana", Font.PLAIN, 12));
-					yAxisFlip=false;
-				}
-				else
-				{
-					window.setTitle(windowTitle+" *Y-FLIPPED");
-					m.setFont(new Font("Verdana", Font.BOLD, 12));
-					yAxisFlip=true;
-				}
-				
+				toggleYAxisFlip((MenuItem)e.getSource());
 			}  else if (e.getActionCommand().equalsIgnoreCase("Toggle Grid")) {
-				toggleGrid();
+				toggleGrid((MenuItem)e.getSource());
 			} else if(e.getActionCommand().equalsIgnoreCase("Grid Color")){
 				changeGridColor();
 			} else if (e.getActionCommand().equalsIgnoreCase("Grid Size")) {
@@ -547,7 +552,7 @@ public class NeetScript extends JFrame {
 		
 		private int pointMarkerSize = 10;
 		
-		private boolean grid = true;
+		private boolean grid = false;
 		private int gridSize = 10;
 		private Color gridColor = new Color(238, 238, 238);
 		
