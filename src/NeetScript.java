@@ -606,15 +606,12 @@ public class NeetScript extends JFrame {
 			g2.setColor(gridColor);
 			int w = window.getWidth();
 			int h = window.getHeight();
+			//Vertical Grid Lines
 			for(int i=0; i<h; i+=gridSize)
-			{
 				g2.draw(new Line2D.Double(0, i, w, i));
-				
-			}
+			//Horizontal grid lines
 			for(int j=0; j<w; j+= gridSize)
-			{
 				g2.draw(new Line2D.Double(j, 0, j, h));
-			}
 	
 		}
 	
