@@ -249,24 +249,24 @@ public class NeetScript extends JFrame {
 		}
 	}
 	private void clear()
-	{
-		
+	{	
 		panel.redoStateStack.clear();
 		panel.list.clear();
 		panel.undoStateStack.push(panel.list);
 		panel.repaint();
 	}
-	private void record()
+	private void record(MenuItem m)
 	{
-		
 		if(panel.recording)
 		{
 			panel.recording=false;
+			m.setFont(new Font("Verdana", Font.PLAIN, 12));
 			recordTolerance.setVisible(false);
 		}
 		else
 		{
 			recordTolerance.setBounds(window.getWidth()/2-150, 0, 300, 100);
+			m.setFont(new Font("Verdana", Font.ITALIC, 12));
 			recordTolerance.setVisible(true);
 			panel.recording=true;
 		}
@@ -515,7 +515,7 @@ public class NeetScript extends JFrame {
 			} else if(e.getActionCommand().equalsIgnoreCase("Clear")) {
 				clear();
 			} else if(e.getActionCommand().equalsIgnoreCase("Toggle Record")) {
-				record();
+				record((MenuItem)e.getSource());
 			} else if(e.getActionCommand().equalsIgnoreCase("Toggle Y-Axis Flip")) {
 				toggleYAxisFlip((MenuItem)e.getSource());
 			}  else if (e.getActionCommand().equalsIgnoreCase("Toggle Grid")) {
