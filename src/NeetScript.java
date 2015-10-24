@@ -146,7 +146,7 @@ public class NeetScript extends JFrame {
 		menuBar.add(edit);
 		menuBar.add(grid);
 		menuBar.add(window);
-		if (null == this.getMenuBar()) {
+		if (this.getMenuBar() == null) {	
 			this.setMenuBar(menuBar);
 		}
 	}
