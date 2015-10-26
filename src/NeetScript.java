@@ -702,9 +702,9 @@ public class NeetScript extends JFrame {
 				redoStateStack.clear();
 		}
 		@SuppressWarnings("unchecked")
-		public ArrayList<Point> getShallowList(ArrayList<Point> l)
+		public ArrayList<Point> getShallowList(ArrayList<Point> list)
 		{
-			return (ArrayList<Point>)l.clone();
+			return (ArrayList<Point>)list.clone();
 		}
 		//Unimplemented Methods
 		public void mouseMoved(MouseEvent e){	
