@@ -33,10 +33,12 @@ import javax.swing.JColorChooser;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
@@ -348,7 +350,15 @@ public class NeetScript extends JFrame {
 				"Save before quit?";
 		private final String CLEAR_MESSAGE = "You may have unsaved work. "+
 				"Save before clear?";
-		
+		private final String ABOUT_MESSAGE = 
+				"A tool for drawing simple way point style scripts. \n\n"
+				+"Simply click each point you want your object to follow \n"
+				+ "read in the exported file in your game as a list of points. Use \n"
+				+ "the record feature with a lower tolerance to achieve smooth \n"
+				+ "curves. This style of pre-determined way pointing works \n"
+				+ "better for game screens that do not move, so set the resolution \n"
+				+ "to that of your game screen and draw your script one to one with \n"
+				+ "your game screen.";
 		public void windowClosing(WindowEvent e) 
 		{
 			quitWithPrompt();
@@ -533,7 +543,7 @@ public class NeetScript extends JFrame {
 				menu.getItem(resPos).setEnabled(false);
 			}
 			else if (e.getActionCommand().equalsIgnoreCase("About")) {
-				JOptionPane.showMessageDialog(null, "A tool for making simple way-point scripts", "Info",
+				JOptionPane.showMessageDialog(null, ABOUT_MESSAGE, "Info",
 						JOptionPane.PLAIN_MESSAGE);
 			}
 		}
