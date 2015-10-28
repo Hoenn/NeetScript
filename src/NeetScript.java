@@ -329,6 +329,9 @@ public class NeetScript extends JFrame {
 		int height = Integer.parseInt(targetSize.substring(targetSize.indexOf("x")+1).trim());
 		window.setSize(width, height);
 		
+		Menu menu = (Menu)((MenuItem)e.getSource()).getParent();
+		clearMenuSelection(3);
+		menu.getItem(resPos).setEnabled(false);
 		return resPos;
 	}	
 	private String getPointListFormatted()
@@ -344,6 +347,13 @@ public class NeetScript extends JFrame {
 		}
 		
 		return formatted.toString();
+	}
+	private void clearMenuSelection(int menuNum) 
+	{
+		//Sets all menu items to enabled
+		Menu menu = getMenuBar().getMenu(menuNum);
+		for (int i = 0; i < menu.getItemCount(); i++)
+			menu.getItem(i).setEnabled(true);
 	}
 	private class WindowHandler extends WindowAdapter implements ActionListener {
 		private final String QUIT_MESSAGE= "You may have unsaved work. "+
@@ -391,13 +401,7 @@ public class NeetScript extends JFrame {
 	        }
 	       
 	    }
-		private void clearMenuSelection(int menuNum) 
-		{
-			//Sets all menu items to enabled
-			Menu menu = getMenuBar().getMenu(menuNum);
-			for (int i = 0; i < menu.getItemCount(); i++)
-				menu.getItem(i).setEnabled(true);
-		}
+		
 		private void openFile(File f)
 		{
 			panel.undoStateStack.clear();
@@ -534,13 +538,8 @@ public class NeetScript extends JFrame {
 				changeGridColor();
 			} else if (e.getActionCommand().equalsIgnoreCase("Grid Size")) {
 				changeGridSize();
-			}
-			else if(menu.getLabel().equals("Window"))
-			{
-				int resPos= handleWindowResize(e);
-				//Clears Window Menu 
-				clearMenuSelection(3);
-				menu.getItem(resPos).setEnabled(false);
+			} else if(menu.getLabel().equals("Window")) {
+				handleWindowResize(e);
 			}
 			else if (e.getActionCommand().equalsIgnoreCase("About")) {
 				JOptionPane.showMessageDialog(null, ABOUT_MESSAGE, "Info",
