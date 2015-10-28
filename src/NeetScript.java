@@ -312,7 +312,7 @@ public class NeetScript extends JFrame {
 	{
 		gridSizeDialog.setVisible(true);
 	}
-	private int handleWindowResize(ActionEvent e)
+	private void handleWindowResize(ActionEvent e)
 	{
 		String targetSize = e.getActionCommand().toString();
 		int resPos=-1;
@@ -329,10 +329,10 @@ public class NeetScript extends JFrame {
 		int height = Integer.parseInt(targetSize.substring(targetSize.indexOf("x")+1).trim());
 		window.setSize(width, height);
 		
+		//Clears Window then disables current selection
 		Menu menu = (Menu)((MenuItem)e.getSource()).getParent();
 		clearMenuSelection(3);
 		menu.getItem(resPos).setEnabled(false);
-		return resPos;
 	}	
 	private String getPointListFormatted()
 	{
