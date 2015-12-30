@@ -90,6 +90,7 @@ public class NeetScript extends JFrame {
 
 	public NeetScript()
 	{
+		//Set the title
 		super("NeetScript");
 		addMenu();
 		addPanel();
