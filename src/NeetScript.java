@@ -33,10 +33,12 @@ import javax.swing.JColorChooser;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.filechooser.FileFilter;
@@ -311,7 +313,7 @@ public class NeetScript extends JFrame {
 	{
 		gridSizeDialog.setVisible(true);
 	}
-	private int handleWindowResize(ActionEvent e)
+	private void handleWindowResize(ActionEvent e)
 	{
 		String targetSize = e.getActionCommand().toString();
 		int resPos=-1;
@@ -328,7 +330,10 @@ public class NeetScript extends JFrame {
 		int height = Integer.parseInt(targetSize.substring(targetSize.indexOf("x")+1).trim());
 		window.setSize(width, height);
 		
-		return resPos;
+		//Clears Window then disables current selection
+		Menu menu = (Menu)((MenuItem)e.getSource()).getParent();
+		clearMenuSelection(3);
+		menu.getItem(resPos).setEnabled(false);
 	}	
 	private String getPointListFormatted()
 	{
@@ -344,12 +349,27 @@ public class NeetScript extends JFrame {
 		
 		return formatted.toString();
 	}
+	private void clearMenuSelection(int menuNum) 
+	{
+		//Sets all menu items to enabled
+		Menu menu = getMenuBar().getMenu(menuNum);
+		for (int i = 0; i < menu.getItemCount(); i++)
+			menu.getItem(i).setEnabled(true);
+	}
 	private class WindowHandler extends WindowAdapter implements ActionListener {
 		private final String QUIT_MESSAGE= "You may have unsaved work. "+
 				"Save before quit?";
 		private final String CLEAR_MESSAGE = "You may have unsaved work. "+
 				"Save before clear?";
-		
+		private final String ABOUT_MESSAGE = 
+				"A tool for drawing simple way point style scripts. \n\n"
+				+"Simply click each point you want your object to follow \n"
+				+ "read in the exported file in your game as a list of points. Use \n"
+				+ "the record feature with a lower tolerance to achieve smooth \n"
+				+ "curves. This style of pre-determined way pointing works \n"
+				+ "better for game screens that do not move, so set the resolution \n"
+				+ "to that of your game screen and draw your script one to one with \n"
+				+ "your game screen.";
 		public void windowClosing(WindowEvent e) 
 		{
 			quitWithPrompt();
@@ -382,13 +402,7 @@ public class NeetScript extends JFrame {
 	        }
 	       
 	    }
-		private void clearMenuSelection(int menuNum) 
-		{
-			//Sets all menu items to enabled
-			Menu menu = getMenuBar().getMenu(menuNum);
-			for (int i = 0; i < menu.getItemCount(); i++)
-				menu.getItem(i).setEnabled(true);
-		}
+		
 		private void openFile(File f)
 		{
 			panel.undoStateStack.clear();
@@ -525,16 +539,11 @@ public class NeetScript extends JFrame {
 				changeGridColor();
 			} else if (e.getActionCommand().equalsIgnoreCase("Grid Size")) {
 				changeGridSize();
-			}
-			else if(menu.getLabel().equals("Window"))
-			{
-				int resPos= handleWindowResize(e);
-				//Clears Window Menu 
-				clearMenuSelection(3);
-				menu.getItem(resPos).setEnabled(false);
+			} else if(menu.getLabel().equals("Window")) {
+				handleWindowResize(e);
 			}
 			else if (e.getActionCommand().equalsIgnoreCase("About")) {
-				JOptionPane.showMessageDialog(null, "A tool for making simple way-point scripts", "Info",
+				JOptionPane.showMessageDialog(null, ABOUT_MESSAGE, "Info",
 						JOptionPane.PLAIN_MESSAGE);
 			}
 		}
@@ -693,9 +702,9 @@ public class NeetScript extends JFrame {
 				redoStateStack.clear();
 		}
 		@SuppressWarnings("unchecked")
-		public ArrayList<Point> getShallowList(ArrayList<Point> l)
+		public ArrayList<Point> getShallowList(ArrayList<Point> list)
 		{
-			return (ArrayList<Point>)l.clone();
+			return (ArrayList<Point>)list.clone();
 		}
 		//Unimplemented Methods
 		public void mouseMoved(MouseEvent e){	
