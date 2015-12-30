@@ -337,6 +337,7 @@ public class NeetScript extends JFrame {
 	}	
 	private String getPointListFormatted()
 	{
+		//Puts all points in order as "[x,y]"
 		StringBuilder formatted= new StringBuilder();
 		int height = this.getHeight();
 		for(Point p: panel.list)
@@ -422,6 +423,7 @@ public class NeetScript extends JFrame {
 			{
 				e.printStackTrace();
 			}
+			//Extract points from file and add to screen
 			while(content.contains("]"))
 			{
 				int start = content.indexOf("[");
@@ -558,12 +560,14 @@ public class NeetScript extends JFrame {
 		private Stack<ArrayList<Point>> redoStateStack = new Stack<ArrayList<Point>>();
 		
 		private boolean dragging = false; 
+		//Reference to the point being dragged
 		private Point dragged = null;
 		
 		private int pointMarkerSize = 10;
 		
 		private boolean grid = false;
 		private int gridSize = 10;
+		//Default color is gray
 		private Color gridColor = new Color(238, 238, 238);
 		
 		private boolean recording=false;
