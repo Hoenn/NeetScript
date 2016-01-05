@@ -260,6 +260,7 @@ public class NeetScript extends JFrame {
 	}
 	private void record(MenuItem m)
 	{
+		//Italic font means recording is enabled
 		if(panel.recording)
 		{
 			panel.recording=false;
@@ -277,6 +278,7 @@ public class NeetScript extends JFrame {
 	}
 	private void toggleYAxisFlip(MenuItem m)
 	{
+		//Italic font means y axis flip is on
 		if(yAxisFlip)
 		{
 			window.setTitle(windowTitle);
@@ -292,6 +294,7 @@ public class NeetScript extends JFrame {
 	}
 	private void toggleGrid(MenuItem m)
 	{
+		//Italic font means grid is on
 		panel.grid=!panel.grid;
 		if(panel.grid)
 			m.setFont(new Font("Verdana", Font.ITALIC, 12));
@@ -352,7 +355,7 @@ public class NeetScript extends JFrame {
 	}
 	private void clearMenuSelection(int menuNum) 
 	{
-		//Sets all menu items to enabled
+		//Sets all menu items to enabled meaning they can be clicked
 		Menu menu = getMenuBar().getMenu(menuNum);
 		for (int i = 0; i < menu.getItemCount(); i++)
 			menu.getItem(i).setEnabled(true);
@@ -674,6 +677,7 @@ public class NeetScript extends JFrame {
 	
 		public void mouseDragged(MouseEvent e)
 		{
+			//Update position of the stored point being dragged
 			if(dragging)
 			{
 				dragged.x=e.getX();
@@ -681,6 +685,9 @@ public class NeetScript extends JFrame {
 				repaint();
 	
 			}
+			//Use pythagorean theorem to determine the distance between the last point of the list
+			//and the current mouse x and y, if it execeeds the recordTolerance add the point 
+			// to the list
 			if(recording)
 			{
 				int mouseX = e.getX();
