@@ -56,6 +56,7 @@ public class NeetScript extends JFrame {
 	private static final int kControlY = 89;
 	private static final int kControlZ = 90;
 	
+	//Common resolutions
 	private static String[] resolutions = {
 		"4:3 - 640x480",
 		"4:3 - 1024x768",
@@ -73,6 +74,7 @@ public class NeetScript extends JFrame {
 	
 	private DrawingPanel panel;
 	private NeetScript window;
+	//Title
 	private final String windowTitle = "NeetScript";
 	
 	private JFileChooser fileChooser;
@@ -97,11 +99,14 @@ public class NeetScript extends JFrame {
 		addMenu();
 		addPanel();
 		this.addWindowListener(new WindowHandler());
+		//Default size is smallest size in options
 		this.setSize(640, 480);
 		this.setVisible(true);
+		//Size should be locked for practical reasons
 		this.setResizable(false);
 		//For a save before close prompt
 		this.setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
+		//Store reference for use later
 		window=this;
 		addDialogs();
 	}
