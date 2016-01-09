@@ -169,6 +169,8 @@ public class NeetScript extends JFrame {
 		// exclude insets from the size of the panel
 		d.height = d.height - ins.top - ins.bottom;
 		d.width = d.width - ins.left - ins.right;
+		//Screen resolution should now be adjusted to 
+		//represent selected resolution in workspace
 		panel.setSize(d);
 		panel.setLocation(ins.left, ins.top);
 		panel.setBackground(Color.white);
