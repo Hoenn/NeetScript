@@ -565,6 +565,7 @@ public class NeetScript extends JFrame {
 	{		
 		private static final long serialVersionUID = 1L;
 		
+		//Master list of all points in current file
 		public ArrayList<Point> list = new ArrayList<Point>();
 		private Stack<ArrayList<Point>> undoStateStack = new Stack<ArrayList<Point>>();
 		private Stack<ArrayList<Point>> redoStateStack = new Stack<ArrayList<Point>>();
@@ -581,6 +582,7 @@ public class NeetScript extends JFrame {
 		private Color gridColor = new Color(238, 238, 238);
 		
 		private boolean recording=false;
+		//Amount of pixels mouse must move to create new point in record mode
 		private int recordTolerance = 30;
 	
 		@Override
@@ -719,6 +721,7 @@ public class NeetScript extends JFrame {
 			if(redoStateStack.size()>0)
 				redoStateStack.clear();
 		}
+		//List is declared as ArrayList<Point> and never changes type 
 		@SuppressWarnings("unchecked")
 		public ArrayList<Point> getShallowList(ArrayList<Point> list)
 		{
