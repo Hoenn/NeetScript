@@ -47,7 +47,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class NeetScript extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	// constants for menu shortcuts
+	//Constants for menu shortcuts
 	private static final int kControlG = 71;
 	private static final int kControlN = 78;
 	private static final int kControlO = 79;
@@ -89,6 +89,7 @@ public class NeetScript extends JFrame {
 	private JTextField recordToleranceTextField;
 	private JDialog recordTolerance;
 	
+	//Used to change output file y coordinate for inverted coordinate systems
 	private boolean yAxisFlip=false;
 	
 
@@ -142,6 +143,7 @@ public class NeetScript extends JFrame {
 		grid.add(new MenuItem("Grid Color")).addActionListener(new WindowHandler());
 		grid.add(new MenuItem("Grid Size")).addActionListener(new WindowHandler());
 		
+		//Add resolutions to menu
 		for(int i=0; i<resolutions.length; i++)
 		{
 			window.add(new MenuItem(resolutions[i])).addActionListener(new WindowHandler());
@@ -154,6 +156,7 @@ public class NeetScript extends JFrame {
 		menuBar.add(edit);
 		menuBar.add(grid);
 		menuBar.add(window);
+		//Connect our menu bar to window
 		if (this.getMenuBar() == null) {	
 			this.setMenuBar(menuBar);
 		}
@@ -172,6 +175,7 @@ public class NeetScript extends JFrame {
 		//Screen resolution should now be adjusted to 
 		//represent selected resolution in workspace
 		panel.setSize(d);
+		//Set location to top left of user screen
 		panel.setLocation(ins.left, ins.top);
 		panel.setBackground(Color.white);
 		// add mouse listener. Panel itself will be handling mouse events
@@ -179,6 +183,9 @@ public class NeetScript extends JFrame {
 		panel.addMouseMotionListener(panel);
 		this.add(panel);
 	}
+	/* 
+	 * Creates dialogs for grid options, file browser, tolerance slider
+	 */
 	private void addDialogs()
 	{
 		colorChooser= new JColorChooser();
@@ -236,6 +243,9 @@ public class NeetScript extends JFrame {
 		recordTolerance.add(recordToleranceTextField, BorderLayout.SOUTH);
 		recordTolerance.setAlwaysOnTop(true);	
 	}
+	/*
+	 * Undoes the previous action and puts on redo stack
+	 */
 	private void undo()
 	{
 		if(!panel.dragging&&panel.undoStateStack.size()>0)
@@ -249,6 +259,9 @@ public class NeetScript extends JFrame {
 			panel.repaint();
 		}
 	}
+	/*
+	 * Redo the previous undo action
+	 */
 	private void redo()
 	{
 		if(!panel.dragging&&panel.redoStateStack.size()>0)
@@ -258,6 +271,9 @@ public class NeetScript extends JFrame {
 			panel.repaint();
 		}
 	}
+	/*
+	 * Clears all points on screen, clears redo stack, undo-able
+	 */
 	private void clear()
 	{	
 		panel.redoStateStack.clear();
@@ -265,6 +281,10 @@ public class NeetScript extends JFrame {
 		panel.undoStateStack.push(panel.list);
 		panel.repaint();
 	}
+	/*
+	 * Used to place points when mouse is dragged a set amount from previous
+	 * point
+	 */
 	private void record(MenuItem m)
 	{
 		//Italic font means recording is enabled
@@ -283,6 +303,11 @@ public class NeetScript extends JFrame {
 		}
 		repaint();
 	}
+	/*
+	 * Inverts all the y components of points to be screenHeight-y
+	 * This is useful for creating scripts that need to conform
+	 * to inverted y direction coordinate systems
+	 */
 	private void toggleYAxisFlip(MenuItem m)
 	{
 		//Italic font means y axis flip is on
@@ -299,6 +324,9 @@ public class NeetScript extends JFrame {
 			yAxisFlip=true;
 		}
 	}
+	/*
+	 * Turns grid on and off
+	 */
 	private void toggleGrid(MenuItem m)
 	{
 		//Italic font means grid is on
@@ -310,6 +338,9 @@ public class NeetScript extends JFrame {
 		
 		panel.repaint();
 	}
+	/*
+	 * Opens a color chooser for grid
+	 */
 	private void changeGridColor()
 	{
 		JDialog d = JColorChooser.createDialog(null,"Grid Color",true,colorChooser,null,null); 
@@ -319,10 +350,16 @@ public class NeetScript extends JFrame {
 		
 		panel.repaint();
 	}
+	/* Enables a grid size slider
+	 * 
+	 */
 	private void changeGridSize()
 	{
 		gridSizeDialog.setVisible(true);
 	}
+	/*
+	 * Resizing function for resolution menu options
+	 */
 	private void handleWindowResize(ActionEvent e)
 	{
 		String targetSize = e.getActionCommand().toString();
@@ -344,10 +381,14 @@ public class NeetScript extends JFrame {
 		Menu menu = (Menu)((MenuItem)e.getSource()).getParent();
 		clearMenuSelection(3);
 		menu.getItem(resPos).setEnabled(false);
-	}	
+	}
+	/*
+	 * Puts all points in the order they
+	 * were created as "[x1,y1],[x2,y2]..." 
+	 */
 	private String getPointListFormatted()
 	{
-		//Puts all points in order as "[x,y]"
+		
 		StringBuilder formatted= new StringBuilder();
 		int height = this.getHeight();
 		for(Point p: panel.list)
@@ -360,6 +401,9 @@ public class NeetScript extends JFrame {
 		
 		return formatted.toString();
 	}
+	/*
+	 * Sets all menu items to enabled
+	 */
 	private void clearMenuSelection(int menuNum) 
 	{
 		//Sets all menu items to enabled meaning they can be clicked
@@ -367,6 +411,9 @@ public class NeetScript extends JFrame {
 		for (int i = 0; i < menu.getItemCount(); i++)
 			menu.getItem(i).setEnabled(true);
 	}
+	/*
+	 * Handles all interfacing with screen and menus
+	 */
 	private class WindowHandler extends WindowAdapter implements ActionListener {
 		private final String QUIT_MESSAGE= "You may have unsaved work. "+
 				"Save before quit?";
@@ -381,10 +428,21 @@ public class NeetScript extends JFrame {
 				+ "better for game screens that do not move, so set the resolution \n"
 				+ "to that of your game screen and draw your script one to one with \n"
 				+ "your game screen.";
+		
+		/*
+		 * Catches user quitting and redirects to work-in-progress check
+		 */
 		public void windowClosing(WindowEvent e) 
 		{
 			quitWithPrompt();
 		}
+		
+		/*
+		 * If user has anything in undo stack he must have unsaved work
+		 * If file has been opened through workspace save automatically works
+		 * If file needs to be created user is prompted to do so through
+		 * a file browser
+		 */
 		private void quitWithPrompt()
 		{
 			if(panel.undoStateStack.size()<=0)
@@ -392,7 +450,7 @@ public class NeetScript extends JFrame {
 			String buttonLabels[] = {"Save", "Don't Save", "Cancel"};
 	        int choice= JOptionPane.showOptionDialog(null, QUIT_MESSAGE, "Exit", JOptionPane.DEFAULT_OPTION,
 	        			JOptionPane.WARNING_MESSAGE, null, buttonLabels, buttonLabels[1]);
-	      
+	        //Save
 	        if(choice==0)
 	        {
 	        	if(currentFile!=null)
@@ -407,13 +465,18 @@ public class NeetScript extends JFrame {
 					System.exit(0);
 				}	     
 	        }
+	        //Don't Save
 	        else if(choice==1)
 	        {
 	        	System.exit(0);
 	        }
+	        //Cancel
+	        //	do nothing
 	       
 	    }
-		
+		/*
+		 * Opens and parses all points from a .way file
+		 */
 		private void openFile(File f)
 		{
 			panel.undoStateStack.clear();
@@ -448,6 +511,9 @@ public class NeetScript extends JFrame {
 			panel.repaint();
 			
 		}
+		/*
+		 * Creates file, handles missing suffix
+		 */
 		private void saveAs(File f)
 		{
 			String path = f.getAbsolutePath();
@@ -465,6 +531,9 @@ public class NeetScript extends JFrame {
 				e.printStackTrace();
 			}
 		}
+		/*
+		 * User selects file to save as or creates new file
+		 */
 		private void save()
 		{
 			if(fileChooser.showSaveDialog(window) == JFileChooser.APPROVE_OPTION)
@@ -474,6 +543,9 @@ public class NeetScript extends JFrame {
 			}
 			
 		}
+		/*
+		 * Creates new file to work with, prompts to save previous work
+		 */
 		private void newFile()
 		{
 			if(panel.undoStateStack.isEmpty())
@@ -507,6 +579,10 @@ public class NeetScript extends JFrame {
 				currentFile = null;
 	        }
 		}
+		
+		/*
+		 * Catches all keyboard and window input
+		 */
 		public void actionPerformed(ActionEvent e) 
 		{
 			//Allows access to the name of the Menu form which item was chosen
@@ -561,6 +637,9 @@ public class NeetScript extends JFrame {
 		}
 	}
 
+	/*
+	 * Main panel used in work flow, catches and handles all mouse input
+	 */
 	public class DrawingPanel extends JPanel implements MouseListener, MouseMotionListener
 	{		
 		private static final long serialVersionUID = 1L;
@@ -694,7 +773,7 @@ public class NeetScript extends JFrame {
 				repaint();
 	
 			}
-			//Use pythagorean theorem to determine the distance between the last point of the list
+			//Use Pythagorean theorem to determine the distance between the last point of the list
 			//and the current mouse x and y, if it execeeds the recordTolerance add the point 
 			// to the list
 			if(recording)
@@ -721,7 +800,8 @@ public class NeetScript extends JFrame {
 			if(redoStateStack.size()>0)
 				redoStateStack.clear();
 		}
-		//List is declared as ArrayList<Point> and never changes type 
+		//The list is declared as ArrayList<Point> and never changes type 
+		//So this method is safe
 		@SuppressWarnings("unchecked")
 		public ArrayList<Point> getShallowList(ArrayList<Point> list)
 		{
