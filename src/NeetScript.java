@@ -47,6 +47,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 public class NeetScript extends JFrame {
 
 	private static final long serialVersionUID = 1L;
+	
 	//Constants for menu shortcuts
 	private static final int kControlG = 71;
 	private static final int kControlN = 78;
@@ -74,7 +75,6 @@ public class NeetScript extends JFrame {
 	
 	private DrawingPanel panel;
 	private NeetScript window;
-	//Title
 	private final String windowTitle = "NeetScript";
 	
 	private JFileChooser fileChooser;
@@ -92,7 +92,9 @@ public class NeetScript extends JFrame {
 	//Used to change output file y coordinate for inverted coordinate systems
 	private boolean yAxisFlip=false;
 	
-
+	/*
+	 * Create frame and add menus,panels 
+	 */
 	public NeetScript()
 	{
 		//Set the title
@@ -116,7 +118,10 @@ public class NeetScript extends JFrame {
 	{
 		new NeetScript();
 	}
-
+	/*
+	 * Method for creating all of the menu options
+	 * and attaching listeners for menu shortcuts
+	 */
 	private void addMenu() 
 	{
 		// Add menu bar to our frame
@@ -161,7 +166,9 @@ public class NeetScript extends JFrame {
 			this.setMenuBar(menuBar);
 		}
 	}
-
+	/*
+	 * Creates and adds Drawing Panel to the frame
+	 */
 	private void addPanel() 
 	{
 		panel = new DrawingPanel();
